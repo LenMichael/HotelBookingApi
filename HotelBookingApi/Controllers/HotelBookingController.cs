@@ -33,7 +33,7 @@ namespace HotelBookingApi.Controllers
 
                 bookingInDb = booking;
             }
-
+            //mplampla
             _context.SaveChanges();
             return new JsonResult(Ok(booking));
         }
