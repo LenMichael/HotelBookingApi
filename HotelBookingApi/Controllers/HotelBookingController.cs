@@ -19,7 +19,8 @@ namespace HotelBookingApi.Controllers
 
 
         [HttpPost]
-        public JsonResult CreateEdit(HotelBooking booking)
+        //public JsonResult CreateEdit(HotelBooking booking)
+        public ActionResult<HotelBooking> CreateEdit(HotelBooking booking)
         {
             if (booking.Id == 0)
             {
@@ -29,42 +30,52 @@ namespace HotelBookingApi.Controllers
             {
                 var bookingInDb = _context.Bokkings.Find(booking.Id);
                 if (bookingInDb == null)
-                    return new JsonResult(NotFound());
+                    //return new JsonResult(NotFound());
+                    return NotFound();
 
                 bookingInDb = booking;
             }
             
             _context.SaveChanges();
-            return new JsonResult(Ok(booking));
+            //return new JsonResult(Ok(booking));
+            return Ok(booking);
         }
 
         [HttpGet]
-        public JsonResult Get(int id)
+        //public JsonResult Get(int id)
+        public ActionResult<HotelBooking> Get(int id)
         {
             var result = _context.Bokkings.Find(id);
             if (result == null)
-                return new JsonResult(NotFound());
+                //return new JsonResult(NotFound());
+                return NotFound();
 
-            return new JsonResult(Ok(result));
+            //return new JsonResult(Ok(result));
+            return Ok(result);
         }
 
         [HttpDelete]
-        public JsonResult Delete(int id)
+        //public JsonResult Delete(int id)
+        public ActionResult<HotelBooking> Delete(int id)
         {
             var result = _context.Bokkings.Find(id);
             if (result == null)
-                return new JsonResult(NotFound());
+                //return new JsonResult(NotFound());
+                return NotFound();
 
             _context.Bokkings.Remove(result);
             _context.SaveChanges();
-            return new JsonResult(NoContent());
+            //return new JsonResult(NoContent());
+            return NoContent();
         }
 
         [HttpGet]
-        public JsonResult GetAll()
+        //public JsonResult GetAll()
+        public ActionResult<HotelBooking> GetAll()
         {
             var result = _context.Bokkings.ToList();
-            return new JsonResult(result);
+            //return new JsonResult(result);
+            return Ok(result);
         }
     }
 }
