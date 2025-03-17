@@ -24,11 +24,11 @@ namespace HotelBookingApi.Controllers
         {
             if (booking.Id == 0)
             {
-                _context.Bokkings.Add(booking);
+                _context.Bookings.Add(booking);
             }
             else
             {
-                var bookingInDb = _context.Bokkings.Find(booking.Id);
+                var bookingInDb = _context.Bookings.Find(booking.Id);
                 if (bookingInDb == null)
                     //return new JsonResult(NotFound());
                     return NotFound();
@@ -45,7 +45,7 @@ namespace HotelBookingApi.Controllers
         //public JsonResult Get(int id)
         public ActionResult<HotelBooking> Get(int id)
         {
-            var result = _context.Bokkings.Find(id);
+            var result = _context.Bookings.Find(id);
             if (result == null)
                 //return new JsonResult(NotFound());
                 return NotFound();
@@ -58,12 +58,12 @@ namespace HotelBookingApi.Controllers
         //public JsonResult Delete(int id)
         public ActionResult<HotelBooking> Delete(int id)
         {
-            var result = _context.Bokkings.Find(id);
+            var result = _context.Bookings.Find(id);
             if (result == null)
                 //return new JsonResult(NotFound());
                 return NotFound();
 
-            _context.Bokkings.Remove(result);
+            _context.Bookings.Remove(result);
             _context.SaveChanges();
             //return new JsonResult(NoContent());
             return NoContent();
@@ -73,9 +73,44 @@ namespace HotelBookingApi.Controllers
         //public JsonResult GetAll()
         public ActionResult<HotelBooking> GetAll()
         {
-            var result = _context.Bokkings.ToList();
+            var result = _context.Bookings.ToList();
             //return new JsonResult(result);
             return Ok(result);
         }
+
+        [HttpGet]
+        public ActionResult<HotelBooking> GetByRoomNumber(int roomNumber)
+        {
+            var result = _context.Bookings.Where(x => x.RoomNumber == roomNumber).ToList();
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public ActionResult<HotelBooking> GetByClientName(string clientName)
+        {
+            var result = _context.Bookings.Where(x => x.ClientName == clientName).ToList();
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public ActionResult<HotelBooking> GetByRoomNumberAndClientName(int roomNumber, string clientName)
+        {
+            var result = _context.Bookings.Where(x => x.RoomNumber == roomNumber && x.ClientName == clientName).ToList();
+            return Ok(result);
+        }
+        [HttpGet]
+        public ActionResult<HotelBooking> GetByRoomNumberOrClientName(int roomNumber, string clientName)
+        {
+            var result = _context.Bookings.Where(x => x.RoomNumber == roomNumber || x.ClientName == clientName).ToList();
+            return Ok(result);
+        }
+        [HttpGet]
+        public ActionResult<HotelBooking> GetFirstBookings()
+        {
+            var result = _context.Bookings.Take(3).ToList();
+            return Ok(result);
+        }
+
+
     }
 }
