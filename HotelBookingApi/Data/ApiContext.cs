@@ -9,6 +9,10 @@ namespace HotelBookingApi.Data
     {
         public DbSet<HotelBooking> Bookings { get; set; }
         public ApiContext(DbContextOptions<ApiContext> options) : base(options) { }
+        public virtual DbSet<HotelBooking> GetBookings()
+        {
+            return Bookings;
+        }
 
     }
 }
