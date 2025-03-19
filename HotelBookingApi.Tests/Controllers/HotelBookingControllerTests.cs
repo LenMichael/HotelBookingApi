@@ -8,6 +8,7 @@ using HotelBookingApi.Models;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HotelBookingApi.Tests.Controllers
 {
@@ -15,13 +16,14 @@ namespace HotelBookingApi.Tests.Controllers
     {
         private readonly Mock<ApiContext> _mockContext;
         private readonly Mock<ILogger<HotelBookingController>> _mockLogger;
+        private readonly Mock<IMemoryCache> _mockCache;
         private readonly HotelBookingController _controller;
 
         public HotelBookingControllerTests()
         {
             _mockContext = new Mock<ApiContext>(new DbContextOptions<ApiContext>());
             _mockLogger = new Mock<ILogger<HotelBookingController>>();
-            _controller = new HotelBookingController(_mockContext.Object, _mockLogger.Object);
+            _controller = new HotelBookingController(_mockContext.Object, _mockLogger.Object , _mockCache.Object);
         }
 
         [Fact]
