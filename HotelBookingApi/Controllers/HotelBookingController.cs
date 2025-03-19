@@ -25,7 +25,7 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<HotelBooking>> GetAll(int PageNumber = 1, int pageSize = 10)
+        public ActionResult<IEnumerable<HotelBooking>> GetAll_Cache(int PageNumber = 1, int pageSize = 10)
         {
             var cacheKey = $"GetAll_{PageNumber}_{pageSize}";
             if (!_cache.TryGetValue(cacheKey, out List<HotelBooking> bookings))
