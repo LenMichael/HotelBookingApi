@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using HotelBookingApi.Models;
 using HotelBookingApi.Data;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,12 +15,33 @@ namespace HotelBookingApi.Controllers
     {
         private readonly ApiContext _context;
         private readonly ILogger<HotelBookingController> _logger;
+        private readonly IMemoryCache _cache;
 
-        public HotelBookingController(ApiContext context, ILogger<HotelBookingController> logger)
+        public HotelBookingController(ApiContext context, ILogger<HotelBookingController> logger, IMemoryCache cache)
         {
             _context = context;
             _logger = logger;
+            _cache = cache;
         }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<HotelBooking>> GetAll(int PageNumber = 1, int pageSize = 10)
+        {
+            var cacheKey = $"GetAll_{PageNumber}_{pageSize}";
+            if (!_cache.TryGetValue(cacheKey, out List<HotelBooking> bookings))
+            {
+                bookings = _context.GetBookings().Skip((PageNumber - 1) * pageSize).Take(pageSize).ToList();
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+                _cache.Set(cacheKey, bookings, cacheEntryOptions);
+                _logger.LogInformation("Retrieved bookings from database.");
+            }
+            else
+                _logger.LogInformation("Retrieved bookings from cache.");
+            
+            return Ok(bookings);
+        }
+
 
         [HttpPost]
         public ActionResult<HotelBooking> CreateEdit(HotelBooking booking)
