@@ -23,6 +23,7 @@ namespace HotelBookingApi.Tests.Controllers
         {
             _mockContext = new Mock<ApiContext>(new DbContextOptions<ApiContext>());
             _mockLogger = new Mock<ILogger<HotelBookingController>>();
+            _mockCache = new Mock<IMemoryCache>();
             _controller = new HotelBookingController(_mockContext.Object, _mockLogger.Object , _mockCache.Object);
         }
 
