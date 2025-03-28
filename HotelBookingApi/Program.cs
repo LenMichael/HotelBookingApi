@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using HotelBookingApi.Data;
 using HotelBookingApi.Middleware;
 
@@ -25,6 +25,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(builder =>
+    builder.WithOrigins("http://localhost:5173") // Επέτρεψε το origin της React εφαρμογής
+           .AllowAnyMethod()
+           .AllowAnyHeader());
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
