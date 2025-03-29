@@ -46,7 +46,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(builder =>
-    builder.WithOrigins("http://localhost:5174") // Επέτρεψε το origin της React εφαρμογής
+    builder.WithOrigins("http://localhost:5173") // Επέτρεψε το origin της React εφαρμογής
            .AllowAnyMethod()
            .AllowAnyHeader());
 
