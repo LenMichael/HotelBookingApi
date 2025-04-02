@@ -4,6 +4,7 @@ using HotelBookingApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.Caching.Memory;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,7 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(builder =>
-    builder.WithOrigins("http://localhost:5173") // Επέτρεψε το origin της React εφαρμογής
+    builder.WithOrigins("http://localhost:5173") 
            .AllowAnyMethod()
            .AllowAnyHeader());
 
@@ -57,5 +58,24 @@ app.UseAuthorization();
 
 //app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapControllers();
+
+// Initialize cache
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApiContext>();
+    var cache = services.GetRequiredService<IMemoryCache>();
+
+    // Initialize Bookings data
+    var bookings = context.GetBookings().ToList();
+    cache.Set("bookings", bookings);
+
+    // Initialize Users data
+    var users = context.Users.ToList();
+    foreach (var user in users)
+    {
+        cache.Set(user.Username, user);
+    }
+}
 
 app.Run();

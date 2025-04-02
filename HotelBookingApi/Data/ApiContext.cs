@@ -15,5 +15,17 @@ namespace HotelBookingApi.Data
             return Bookings;
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<HotelBooking>().HasData(
+                new HotelBooking { Id = 1, RoomNumber = 101, ClientName = "John Doe" },
+                new HotelBooking { Id = 2, RoomNumber = 102, ClientName = "Jane Smith" }
+            );
+
+            modelBuilder.Entity<User>().HasData(
+                new User { Id = 1, Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123") }
+            );
+        }
+
     }
 }

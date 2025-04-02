@@ -25,22 +25,34 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<HotelBooking>> GetAll_Cache(int PageNumber = 1, int pageSize = 10)
+        public ActionResult<IEnumerable<HotelBooking>> GetAll()
         {
-            var cacheKey = $"GetAll_{PageNumber}_{pageSize}";
-            if (!_cache.TryGetValue(cacheKey, out List<HotelBooking> bookings))
+            if (!_cache.TryGetValue("bookings", out List<HotelBooking> bookings))
             {
-                bookings = _context.GetBookings().Skip((PageNumber - 1) * pageSize).Take(pageSize).ToList();
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-                _cache.Set(cacheKey, bookings, cacheEntryOptions);
-                _logger.LogInformation("Retrieved bookings from database.");
+                bookings = _context.GetBookings().ToList();
+                _cache.Set("bookings", bookings);
             }
-            else
-                _logger.LogInformation("Retrieved bookings from cache.");
-            
             return Ok(bookings);
         }
+
+
+        //[HttpGet]
+        //public ActionResult<IEnumerable<HotelBooking>> GetAll_Cache(int PageNumber = 1, int pageSize = 10)
+        //{
+        //    var cacheKey = $"GetAll_{PageNumber}_{pageSize}";
+        //    if (!_cache.TryGetValue(cacheKey, out List<HotelBooking> bookings))
+        //    {
+        //        bookings = _context.GetBookings().Skip((PageNumber - 1) * pageSize).Take(pageSize).ToList();
+        //        var cacheEntryOptions = new MemoryCacheEntryOptions()
+        //            .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+        //        _cache.Set(cacheKey, bookings, cacheEntryOptions);
+        //        _logger.LogInformation("Retrieved bookings from database.");
+        //    }
+        //    else
+        //        _logger.LogInformation("Retrieved bookings from cache.");
+
+        //    return Ok(bookings);
+        //}
 
 
         [HttpPost]
@@ -71,13 +83,21 @@ namespace HotelBookingApi.Controllers
             }
 
             _context.SaveChanges();
+            _cache.Set("bookings", _context.GetBookings().ToList());
+
             return Ok(booking);
         }
 
         [HttpGet]
         public ActionResult<HotelBooking> Get(int id)
         {
-            var result = _context.Bookings.Find(id);
+            if (!_cache.TryGetValue("bookings", out List<HotelBooking> bookings))
+            {
+                bookings = _context.GetBookings().ToList();
+                _cache.Set("bookings", bookings);
+            }
+
+            var result = bookings?.FirstOrDefault(x => x.Id == id);
             if (result == null)
             {
                 _logger.LogWarning($"Booking with ID {id} not found.");
@@ -89,16 +109,26 @@ namespace HotelBookingApi.Controllers
         [HttpDelete]
         public ActionResult<HotelBooking> Delete(int id)
         {
-            var result = _context.Bookings.Find(id);
-            if (result == null)
+            if (!_cache.TryGetValue("bookings", out List<HotelBooking> bookings))
+            {
+                bookings = _context.GetBookings().ToList();
+                _cache.Set("bookings", bookings);
+            }
+
+            var booking = bookings?.FirstOrDefault(x => x.Id == id);
+            if (booking == null)
             {
                 _logger.LogWarning($"Booking with ID {id} not found.");
                 return NotFound();
             }
 
-            _context.Bookings.Remove(result);
+            _context.Bookings.Remove(booking);
             _context.SaveChanges();
             _logger.LogInformation($"Deleted booking with ID {id}.");
+
+            bookings.Remove(booking);
+            _cache.Set("bookings", bookings);
+
             return NoContent();
         }
 
@@ -110,37 +140,39 @@ namespace HotelBookingApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<HotelBooking>> GetByRoomNumber(int roomNumber)
-        {
-            var result = _context.GetBookings().Where(x => x.RoomNumber == roomNumber).ToList();
-            return Ok(result);
-        }
+        #region Filter Methods
+        //[HttpGet]
+        //public ActionResult<IEnumerable<HotelBooking>> GetByRoomNumber(int roomNumber)
+        //{
+        //    var result = _context.GetBookings().Where(x => x.RoomNumber == roomNumber).ToList();
+        //    return Ok(result);
+        //}
 
-        [HttpGet]
-        public ActionResult<IEnumerable<HotelBooking>> GetByClientName(string clientName)
-        {
-            var result = _context.GetBookings().Where(x => x.ClientName == clientName).ToList();
-            return Ok(result);
-        }
+        //[HttpGet]
+        //public ActionResult<IEnumerable<HotelBooking>> GetByClientName(string clientName)
+        //{
+        //    var result = _context.GetBookings().Where(x => x.ClientName == clientName).ToList();
+        //    return Ok(result);
+        //}
 
-        [HttpGet]
-        public ActionResult<IEnumerable<HotelBooking>> GetByRoomNumberAndClientName(int roomNumber, string clientName)
-        {
-            var result = _context.GetBookings().Where(x => x.RoomNumber == roomNumber && x.ClientName == clientName).ToList();
-            return Ok(result);
-        }
-        [HttpGet]
-        public ActionResult<IEnumerable<HotelBooking>> GetByRoomNumberOrClientName(int roomNumber, string clientName)
-        {
-            var result = _context.GetBookings().Where(x => x.RoomNumber == roomNumber || x.ClientName == clientName).ToList();
-            return Ok(result);
-        }
-        [HttpGet]
-        public ActionResult<IEnumerable<HotelBooking>> GetFirstBookings()
-        {
-            var result = _context.GetBookings().Take(3).ToList();
-            return Ok(result);
-        }
+        //[HttpGet]
+        //public ActionResult<IEnumerable<HotelBooking>> GetByRoomNumberAndClientName(int roomNumber, string clientName)
+        //{
+        //    var result = _context.GetBookings().Where(x => x.RoomNumber == roomNumber && x.ClientName == clientName).ToList();
+        //    return Ok(result);
+        //}
+        //[HttpGet]
+        //public ActionResult<IEnumerable<HotelBooking>> GetByRoomNumberOrClientName(int roomNumber, string clientName)
+        //{
+        //    var result = _context.GetBookings().Where(x => x.RoomNumber == roomNumber || x.ClientName == clientName).ToList();
+        //    return Ok(result);
+        //}
+        //[HttpGet]
+        //public ActionResult<IEnumerable<HotelBooking>> GetFirstBookings()
+        //{
+        //    var result = _context.GetBookings().Take(3).ToList();
+        //    return Ok(result);
+        //}
+        #endregion
     }
 }
