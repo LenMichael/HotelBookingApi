@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Caching.Memory;
+using HotelBookingApi.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,23 +60,36 @@ app.UseAuthorization();
 //app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapControllers();
 
+#region Sample data, no need DB
 // Initialize cache
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApiContext>();
     var cache = services.GetRequiredService<IMemoryCache>();
-
     // Initialize Bookings data
-    var bookings = context.GetBookings().ToList();
+    var bookings = new List<HotelBooking>
+    {
+        new HotelBooking { Id = 1, RoomNumber = 101, ClientName = "John Doe" },
+        new HotelBooking { Id = 2, RoomNumber = 102, ClientName = "Jane Smith" }
+    };
+    context.Bookings.AddRange(bookings);
+    context.SaveChanges();
     cache.Set("bookings", bookings);
 
     // Initialize Users data
-    var users = context.Users.ToList();
+    var users = new List<User>
+    {
+        new User { Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123") }
+    };
+    context.Users.AddRange(users);
+    context.SaveChanges();
     foreach (var user in users)
     {
         cache.Set(user.Username, user);
     }
+#endregion
+
 }
 
 app.Run();

@@ -15,6 +15,7 @@ namespace HotelBookingApi.Data
             return Bookings;
         }
 
+        //Initial Migration
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<HotelBooking>().HasData(

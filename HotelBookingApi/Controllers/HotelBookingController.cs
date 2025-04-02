@@ -132,7 +132,7 @@ namespace HotelBookingApi.Controllers
             return NoContent();
         }
 
-        [HttpGet]
+        [HttpGet("paged")]
         public ActionResult<IEnumerable<HotelBooking>> GetAll(int PageNumber = 1, int pageSize = 10)
         {
             var result = _context.GetBookings().Skip((PageNumber - 1) * pageSize).Take(pageSize).ToList();
