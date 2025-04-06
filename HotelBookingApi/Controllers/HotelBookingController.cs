@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelBookingApi.Controllers
 {
@@ -54,7 +55,7 @@ namespace HotelBookingApi.Controllers
         //    return Ok(bookings);
         //}
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult<HotelBooking> CreateEdit(HotelBooking booking)
         {
@@ -106,6 +107,7 @@ namespace HotelBookingApi.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public ActionResult<HotelBooking> Delete(int id)
         {

@@ -40,7 +40,8 @@ namespace HotelBookingApi.Controllers
             var user = new User
             {
                 Username = registerDto.Username,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password)
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+                Role = "User"
             };
 
             _context.Users.Add(user);

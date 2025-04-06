@@ -80,7 +80,8 @@ using (var scope = app.Services.CreateScope())
     // Initialize Users data
     var users = new List<User>
     {
-        new User { Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123") }
+        new User { Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), Role = "Admin" },
+        new User { Username = "user", PasswordHash = BCrypt.Net.BCrypt.HashPassword("user123"), Role = "User" }
     };
     context.Users.AddRange(users);
     context.SaveChanges();
