@@ -181,8 +181,6 @@ namespace HotelBookingApi.Controllers
     //    }
     //}
 
-    //lala
-
     public class LoginDto
     {
         public required string Username { get; set; }
