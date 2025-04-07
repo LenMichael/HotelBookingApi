@@ -169,12 +169,12 @@ namespace HotelBookingApi.Controllers
         //    var result = _context.GetBookings().Where(x => x.RoomNumber == roomNumber || x.ClientName == clientName).ToList();
         //    return Ok(result);
         //}
-        //[HttpGet]
-        //public ActionResult<IEnumerable<HotelBooking>> GetFirstBookings()
-        //{
-        //    var result = _context.GetBookings().Take(3).ToList();
-        //    return Ok(result);
-        //}
+        [HttpGet]
+        public ActionResult<IEnumerable<HotelBooking>> GetFirstBookings()
+        {
+            var result = _context.GetBookings().Take(3).ToList();
+            return Ok(result);
+        }
         #endregion
     }
 }

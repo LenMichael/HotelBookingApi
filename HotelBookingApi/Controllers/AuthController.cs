@@ -1,5 +1,6 @@
 ﻿using HotelBookingApi.Data;
 using HotelBookingApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -27,6 +28,30 @@ namespace HotelBookingApi.Controllers
             _logger = logger;
             _cache = cache;
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        {
+            var users = await _context.Users.ToListAsync();
+            return Ok(users);
+        }
+
+
+        //public IActionResult GetUserInfo()
+        //{
+        //    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    if (userId == null)
+        //    {
+        //        return Unauthorized("User not found.");
+        //    }
+        //    var user = _context.Users.Find(userId);
+        //    if (user == null)
+        //    {
+        //        return NotFound("User not found.");
+        //    }
+        //    return Ok(new { user.Username, user.Role });
+        //}
 
 
         [HttpPost]

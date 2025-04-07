@@ -73,8 +73,8 @@ using (var scope = app.Services.CreateScope())
         new HotelBooking { Id = 1, RoomNumber = 101, ClientName = "John Doe" },
         new HotelBooking { Id = 2, RoomNumber = 102, ClientName = "Jane Smith" }
     };
-    context.Bookings.AddRange(bookings);
-    context.SaveChanges();
+    //context.Bookings.AddRange(bookings);
+    //context.SaveChanges();
     cache.Set("bookings", bookings);
 
     // Initialize Users data
@@ -83,8 +83,8 @@ using (var scope = app.Services.CreateScope())
         new User { Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), Role = "Admin" },
         new User { Username = "user", PasswordHash = BCrypt.Net.BCrypt.HashPassword("user123"), Role = "User" }
     };
-    context.Users.AddRange(users);
-    context.SaveChanges();
+    //context.Users.AddRange(users);
+    //context.SaveChanges();
     foreach (var user in users)
     {
         cache.Set(user.Username, user);
