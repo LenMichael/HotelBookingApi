@@ -1,7 +1,5 @@
 ﻿using HotelBookingApi.Data;
 using HotelBookingApi.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace HotelBookingApi.Repositories
 {

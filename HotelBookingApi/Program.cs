@@ -52,6 +52,7 @@ else
 // Register Application Services
 // ------------------------------
 builder.Services.AddScoped<IHotelBookingRepository, HotelBookingRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IHotelBookingService, HotelBookingService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();

@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using HotelBookingApi.Models;
-using HotelBookingApi.Data;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
-using HotelBookingApi.Repositories;
 using HotelBookingApi.Services;
 
 namespace HotelBookingApi.Controllers
@@ -15,7 +9,6 @@ namespace HotelBookingApi.Controllers
     [ApiController]
     public class HotelBookingController : ControllerBase
     {
-        //private readonly ApiContext _context;
         private readonly IHotelBookingService _service;
         private readonly ILogger<HotelBookingController> _logger;
 
