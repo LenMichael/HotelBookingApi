@@ -8,19 +8,23 @@ using Microsoft.Extensions.Caching.Memory;
 using HotelBookingApi.Models;
 using HotelBookingApi.Repositories;
 using HotelBookingApi.Services;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ----------------------------
+// Configure Database Context
+// ----------------------------
 builder.Services.AddDbContext<ApiContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-// Add services to the container.
-builder.Services.AddScoped<IHotelBookingRepository, HotelBookingRepository>();
-builder.Services.AddScoped<IHotelBookingService, HotelBookingService>();
-var useInMemoryDb = false;
 
+var useInMemoryDb = false;
 try
 {
+    // Verify that the SQL Server database can be created/connected
     using (var scope = builder.Services.BuildServiceProvider().CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<ApiContext>();
@@ -29,6 +33,7 @@ try
 }
 catch
 {
+    // If an exception occurs (e.g. SQL Server unreachable), fall back to InMemory database
     useInMemoryDb = true;
 }
 
@@ -42,48 +47,57 @@ else
     Console.WriteLine("Using SQL Server database");
 }
 
-//builder.Services.AddDbContext<ApiContext>(opt =>
-//    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-//builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("BookingDb"));
 
+// ------------------------------
+// Register Application Services
+// ------------------------------
+builder.Services.AddScoped<IHotelBookingRepository, HotelBookingRepository>();
+builder.Services.AddScoped<IHotelBookingService, HotelBookingService>();
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
+
+// -------------------------------
+// Configure Swagger/OpenAPI
+// -------------------------------
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "HotelBookingApi",
         Version = "v1"
     });
 
-    // Προσθήκη υποστήριξης για Authorization
-    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer",
         BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        In = ParameterLocation.Header,
         Description = "Enter 'Bearer' [space] and then your token in the text input below.\n\nExample: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'"
     });
 
-    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            new OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                Reference = new OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
 
+
+// ------------------------------
+// Configure Authentication
+// ------------------------------
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -96,29 +110,28 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])),
         ValidateIssuer = false,
-        ValidateAudience = false,
-        RoleClaimType = "role"
+        ValidateAudience = false
     };
 });
 
-//builder.Services.AddAuthorization(options =>
-//{
-//    options.AddPolicy("AdminPolicy", policy =>
-//        policy.RequireRole("Admin"));
-//});
-
+// ------------------------------
+// Build the application
+// ------------------------------
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// -----------------------------
+// Configure Middleware Pipeline
+// -----------------------------
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Enable CORS if allowed origins are configured in appsettings.json
 var allowedOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string[]>();
 
-if (!allowedOrigins.IsNullOrEmpty())
+if (!allowedOrigins.IsNullOrEmpty() && allowedOrigins.Any())
 {
     app.UseCors(builder =>
         builder.WithOrigins(allowedOrigins)
@@ -130,13 +143,36 @@ if (!allowedOrigins.IsNullOrEmpty())
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
+
+app.Use(async (context, next) =>
+{
+    var user = context.User;
+    //For debbuging: place a breakpoint on the line below
+    //System.Diagnostics.Debugger.Break();
+
+    //Optionally log the claims
+    var claims = user.Claims.Select(c => new { c.Type, c.Value }).ToList();
+    if (!claims.IsNullOrEmpty())
+    {
+        foreach (var claim in claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+        }
+    }
+    await next.Invoke();
+});
+
 app.UseAuthorization();
 
+// Uncomment the following line if you have a custom exception handling middleware
 //app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.MapControllers();
 
 #region Sample data, no need DB
-// Initialize cache
+// -------------------------------------------
+// Seed Sample Data and Cache Initialization
+// -------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -144,9 +180,9 @@ using (var scope = app.Services.CreateScope())
     var cache = services.GetRequiredService<IMemoryCache>();
 
 
+    // Seed Bookings data in in-memory database
     if (useInMemoryDb)
     {
-        // Initialize Bookings data in in-memory database
         if (!context.Bookings.Any())
         {
             context.Bookings.AddRange(new List<HotelBooking>
@@ -159,11 +195,11 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // Initialize cache
+    // Cache Bookings data
     var bookings = context.Bookings.ToList();
     cache.Set("bookings", bookings);
 
-    // Initialize Users data
+    // Seed Users if no users exist
     if (!context.Users.Any())
     {
         context.Users.AddRange(new List<User>
@@ -174,13 +210,13 @@ using (var scope = app.Services.CreateScope())
         context.SaveChanges();
     }
 
+    // Cache each user by username for quick lookup
     var users = context.Users.ToList();
     foreach (var user in users)
     {
         cache.Set(user.Username, user);
     }
     #endregion
-
 }
 
 app.Run();
