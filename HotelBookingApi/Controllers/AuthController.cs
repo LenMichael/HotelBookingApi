@@ -29,6 +29,16 @@ namespace HotelBookingApi.Controllers
             _cache = cache;
         }
 
+
+        //[Authorize(Policy = "AdminPolicy")]
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        //{
+        //    var users = await _context.Users.ToListAsync();
+        //    return Ok(users);
+        //}
+
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
@@ -57,7 +67,7 @@ namespace HotelBookingApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            if (_cache.TryGetValue(registerDto.Username, out User cachedUser) || await _context.Users.AnyAsync(u => u.Username == registerDto.Username))
+            if (_cache.TryGetValue(registerDto.Username, out User? cachedUser) || await _context.Users.AnyAsync(u => u.Username == registerDto.Username))
             {
                 return BadRequest("Username already exists.");
             }
@@ -80,7 +90,7 @@ namespace HotelBookingApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            if (!_cache.TryGetValue(loginDto.Username, out User user))
+            if (!_cache.TryGetValue(loginDto.Username, out User? user))
             {
                 user = await _context.Users.SingleOrDefaultAsync(u => u.Username == loginDto.Username);
                 if (user != null)
@@ -106,7 +116,12 @@ namespace HotelBookingApi.Controllers
                 var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
+                    Subject = new ClaimsIdentity(new[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        new Claim(ClaimTypes.Role, user.Role)
+                    }),
+                    //Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
                     Expires = DateTime.UtcNow.AddDays(7),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
