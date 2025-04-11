@@ -18,29 +18,29 @@ var builder = WebApplication.CreateBuilder(args);
 // ----------------------------
 // Configure Database Context
 // ----------------------------
-builder.Services.AddDbContext<ApiContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var useInMemoryDb = false;
 try
 {
+    builder.Services.AddDbContext<ApiContext>(opt =>
+        opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
     // Verify that the SQL Server database can be created/connected
     using (var scope = builder.Services.BuildServiceProvider().CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<ApiContext>();
         context.Database.EnsureCreated();
     }
+    Console.WriteLine("Using SQL Server database");
 }
-catch
+catch (Exception ex)
 {
     // If an exception occurs (e.g. SQL Server unreachable), fall back to InMemory database
     useInMemoryDb = true;
     builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("BookingDb"));
-    Console.WriteLine("Using InMemory database");
+    Console.WriteLine("Using InMemory database due to error: " + ex.Message);
 }
 
-if (!useInMemoryDb)
-    Console.WriteLine("Using SQL Server database");
 
 
 // ------------------------------
@@ -181,38 +181,25 @@ using (var scope = app.Services.CreateScope())
     // Seed Bookings data in in-memory database
     if (useInMemoryDb)
     {
-        if (!context.Bookings.Any())
+        cache.Set("bookings", /*bookings*/
+            new List<HotelBooking>
+                {
+                new HotelBooking {Id = 1, RoomNumber = 101, ClientName = "John Doe" },
+                new HotelBooking {Id = 2,  RoomNumber = 102, ClientName = "Jane Smith" },
+                new HotelBooking {Id = 3,  RoomNumber = 103, ClientName = "Alice Brown" }
+                }
+            );
+
+        var users = new List<User>
         {
-            context.Bookings.AddRange(new List<HotelBooking>
-            {
-                new HotelBooking { RoomNumber = 101, ClientName = "John Doe" },
-                new HotelBooking { RoomNumber = 102, ClientName = "Jane Smith" },
-                new HotelBooking { RoomNumber = 103, ClientName = "Alice Brown" }
-            });
-            context.SaveChanges();
+            new User {Id = 1, Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), Role = "Admin" },
+            new User {Id = 2, Username = "user", PasswordHash = BCrypt.Net.BCrypt.HashPassword("user123"), Role = "User" }
+        };
+        // Cache each user by username for quick lookup
+        foreach (var user in users)
+        {
+            cache.Set(user.Username, user);
         }
-    }
-
-    // Cache Bookings data
-    var bookings = context.Bookings.ToList();
-    cache.Set("bookings", bookings);
-
-    // Seed Users if no users exist
-    if (!context.Users.Any())
-    {
-        context.Users.AddRange(new List<User>
-        {
-            new User { Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), Role = "Admin" },
-            new User { Username = "user", PasswordHash = BCrypt.Net.BCrypt.HashPassword("user123"), Role = "User" }
-        });
-        context.SaveChanges();
-    }
-
-    // Cache each user by username for quick lookup
-    var users = context.Users.ToList();
-    foreach (var user in users)
-    {
-        cache.Set(user.Username, user);
     }
     #endregion
 }
