@@ -35,17 +35,12 @@ catch
 {
     // If an exception occurs (e.g. SQL Server unreachable), fall back to InMemory database
     useInMemoryDb = true;
-}
-
-if (useInMemoryDb)
-{
     builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("BookingDb"));
     Console.WriteLine("Using InMemory database");
 }
-else
-{
+
+if (!useInMemoryDb)
     Console.WriteLine("Using SQL Server database");
-}
 
 
 // ------------------------------
