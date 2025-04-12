@@ -18,7 +18,8 @@ namespace HotelBookingApi.Data
         {
             modelBuilder.Entity<HotelBooking>().HasData(
                 new HotelBooking { Id = 1, RoomNumber = 101, ClientName = "John Doe" },
-                new HotelBooking { Id = 2, RoomNumber = 102, ClientName = "Jane Smith" }
+                new HotelBooking { Id = 2, RoomNumber = 102, ClientName = "Jane Smith" },
+                new HotelBooking { Id = 3, RoomNumber = 103, ClientName = "Alice Brown" }
             );
 
             modelBuilder.Entity<User>().HasData(

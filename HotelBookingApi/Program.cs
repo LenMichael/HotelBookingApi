@@ -4,13 +4,10 @@ using HotelBookingApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.Caching.Memory;
 using HotelBookingApi.Models;
 using HotelBookingApi.Repositories;
 using HotelBookingApi.Services;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,29 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure Database Context
 // ----------------------------
 
-var useInMemoryDb = false;
-try
-{
-    builder.Services.AddDbContext<ApiContext>(opt =>
-        opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-    // Verify that the SQL Server database can be created/connected
-    using (var scope = builder.Services.BuildServiceProvider().CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<ApiContext>();
-        context.Database.EnsureCreated();
-    }
-    Console.WriteLine("Using SQL Server database");
-}
-catch (Exception ex)
-{
-    // If an exception occurs (e.g. SQL Server unreachable), fall back to InMemory database
-    useInMemoryDb = true;
-    builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("BookingDb"));
-    Console.WriteLine("Using InMemory database due to error: " + ex.Message);
-}
-
-
+builder.Services.AddDbContext<ApiContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // ------------------------------
 // Register Application Services
@@ -137,8 +113,6 @@ if (!allowedOrigins.IsNullOrEmpty() && allowedOrigins.Any())
                .AllowAnyHeader());
 }
 
-
-
 app.UseHttpsRedirection();
 app.UseAuthentication();
 
@@ -166,42 +140,5 @@ app.UseAuthorization();
 //app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
-
-#region Sample data, no need DB
-// -------------------------------------------
-// Seed Sample Data and Cache Initialization
-// -------------------------------------------
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApiContext>();
-    var cache = services.GetRequiredService<IMemoryCache>();
-
-
-    // Seed Bookings data in in-memory database
-    if (useInMemoryDb)
-    {
-        cache.Set("bookings", /*bookings*/
-            new List<HotelBooking>
-                {
-                new HotelBooking {Id = 1, RoomNumber = 101, ClientName = "John Doe" },
-                new HotelBooking {Id = 2,  RoomNumber = 102, ClientName = "Jane Smith" },
-                new HotelBooking {Id = 3,  RoomNumber = 103, ClientName = "Alice Brown" }
-                }
-            );
-
-        var users = new List<User>
-        {
-            new User {Id = 1, Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), Role = "Admin" },
-            new User {Id = 2, Username = "user", PasswordHash = BCrypt.Net.BCrypt.HashPassword("user123"), Role = "User" }
-        };
-        // Cache each user by username for quick lookup
-        foreach (var user in users)
-        {
-            cache.Set(user.Username, user);
-        }
-    }
-    #endregion
-}
 
 app.Run();
