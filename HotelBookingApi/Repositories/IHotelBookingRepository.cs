@@ -4,10 +4,10 @@ namespace HotelBookingApi.Repositories
 {
     public interface IHotelBookingRepository
     {
-        IEnumerable<HotelBooking> GetAll();
-        HotelBooking GetById(int id);  //GetBookingById
-        void Add(HotelBooking booking);  //CreateBooking
-        void Update(HotelBooking booking);  //UpdateBooking
+        IEnumerable<Booking> GetAll();
+        Booking GetById(int id);  //GetBookingById
+        void Add(Booking booking);  //CreateBooking
+        void Update(Booking booking);  //UpdateBooking
         void Delete(int id);  //DeleteBooking
     }
 }

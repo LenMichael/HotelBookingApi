@@ -11,6 +11,7 @@ namespace HotelBookingApi.Models
         [Required]
         public required string PasswordHash { get; set; }
         [Required]
+        [RegularExpression("^(Admin|Customer|Employee)$", ErrorMessage = "Role must be either 'Admin', 'Customer', or 'Employee'.")]
         public required string Role { get; set; }
     }
 

@@ -12,22 +12,22 @@ namespace HotelBookingApi.Services
             _repository = repository;
         }
 
-        public IEnumerable<HotelBooking> GetAllBookings()
+        public IEnumerable<Booking> GetAllBookings()
         {
             return _repository.GetAll();
         }
 
-        public HotelBooking GetBookingById(int id)
+        public Booking GetBookingById(int id)
         {
             return _repository.GetById(id);
         }
 
-        public void CreateBooking(HotelBooking booking)
+        public void CreateBooking(Booking booking)
         {
             _repository.Add(booking);
         }
 
-        public void UpdateBooking(HotelBooking booking)
+        public void UpdateBooking(Booking booking)
         {
             _repository.Update(booking);
         }

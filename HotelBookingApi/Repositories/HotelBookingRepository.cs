@@ -12,23 +12,23 @@ namespace HotelBookingApi.Repositories
             _context = context;
         }
 
-        public IEnumerable<HotelBooking> GetAll()
+        public IEnumerable<Booking> GetAll()
         {
             return _context.GetBookings().ToList();
         }
 
-        public HotelBooking GetById(int id)
+        public Booking GetById(int id)
         {
             return _context.Bookings.Find(id);
         }
 
-        public void Add(HotelBooking booking)
+        public void Add(Booking booking)
         {
             _context.Bookings.Add(booking);
             _context.SaveChanges();
         }
 
-        public void Update(HotelBooking booking)
+        public void Update(Booking booking)
         {
             _context.Bookings.Update(booking);
             _context.SaveChanges();

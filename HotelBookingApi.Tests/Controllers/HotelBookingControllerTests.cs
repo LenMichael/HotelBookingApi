@@ -30,10 +30,26 @@ namespace HotelBookingApi.Tests.Controllers
         public void GetAll_ReturnsOkResult_WithListOfBookings()
         {
             // Arrange
-            var bookings = new List<HotelBooking>
+            var bookings = new List<Booking>
             {
-                new HotelBooking { Id = 1, RoomNumber = 101, ClientName = "John Doe" },
-                new HotelBooking { Id = 2, RoomNumber = 102, ClientName = "Jane Smith" }
+                new Booking
+                {
+                    Id = 1,
+                    RoomId = 1,
+                    UserId = 2,
+                    CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
+                    CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
+                    Status = "Confirmed"
+                },
+                new Booking
+                {
+                    Id = 2,
+                    RoomId = 2,
+                    UserId = 2,
+                    CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 5, 1), DateTimeKind.Utc),
+                    CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 5, 5), DateTimeKind.Utc),
+                    Status = "Cancelled"
+                }
             };
             _mockService.Setup(s => s.GetAllBookings()).Returns(bookings);
 
@@ -42,7 +58,7 @@ namespace HotelBookingApi.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnBookings = Assert.IsType<List<HotelBooking>>(okResult.Value);
+            var returnBookings = Assert.IsType<List<Booking>>(okResult.Value);
             Assert.Equal(2, returnBookings.Count);
         }
 
@@ -50,7 +66,15 @@ namespace HotelBookingApi.Tests.Controllers
         public void Get_ReturnsOkResult_WhenBookingExists()
         {
             // Arrange
-            var booking = new HotelBooking { Id = 1, RoomNumber = 101, ClientName = "John Doe" };
+            var booking = new Booking
+            {
+                Id = 1,
+                RoomId = 1,
+                UserId = 2,
+                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
+                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
+                Status = "Confirmed"
+            };
             _mockService.Setup(s => s.GetBookingById(1)).Returns(booking);
 
             // Act
@@ -58,7 +82,7 @@ namespace HotelBookingApi.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnBooking = Assert.IsType<HotelBooking>(okResult.Value);
+            var returnBooking = Assert.IsType<Booking>(okResult.Value);
             Assert.Equal(1, returnBooking.Id);
         }
 
@@ -66,7 +90,7 @@ namespace HotelBookingApi.Tests.Controllers
         public void Get_ReturnsNotFound_WhenBookingDoesNotExist()
         {
             // Arrange
-            _mockService.Setup(s => s.GetBookingById(1)).Returns((HotelBooking)null);
+            _mockService.Setup(s => s.GetBookingById(1)).Returns((Booking)null);
 
             // Act
             var result = _controller.Get(1);
@@ -79,22 +103,38 @@ namespace HotelBookingApi.Tests.Controllers
         public void Create_ReturnsOkResult_WhenBookingIsValid()
         {
             // Arrange
-            var booking = new HotelBooking { RoomNumber = 101, ClientName = "John Doe" };
+            var booking = new Booking
+            {
+                Id = 1,
+                RoomId = 1,
+                UserId = 2,
+                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
+                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
+                Status = "Confirmed"
+            };
 
             // Act
             var result = _controller.Create(booking);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnBooking = Assert.IsType<HotelBooking>(okResult.Value);
-            Assert.Equal(booking.RoomNumber, returnBooking.RoomNumber);
+            var returnBooking = Assert.IsType<Booking>(okResult.Value);
+            Assert.Equal(booking.Room.RoomNumber, returnBooking.Room.RoomNumber);
         }
 
         [Fact]
         public void Edit_ReturnsOkResult_WhenBookingIsValid()
         {
             // Arrange
-            var booking = new HotelBooking { Id = 1, RoomNumber = 101, ClientName = "John Doe" };
+            var booking = new Booking
+            {
+                Id = 1,
+                RoomId = 1,
+                UserId = 2,
+                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
+                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
+                Status = "Confirmed"
+            };
             _mockService.Setup(s => s.GetBookingById(1)).Returns(booking);
 
             // Act
@@ -102,7 +142,7 @@ namespace HotelBookingApi.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnBooking = Assert.IsType<HotelBooking>(okResult.Value);
+            var returnBooking = Assert.IsType<Booking>(okResult.Value);
             Assert.Equal(1, returnBooking.Id);
         }
 
@@ -110,8 +150,16 @@ namespace HotelBookingApi.Tests.Controllers
         public void Edit_ReturnsNotFound_WhenBookingDoesNotExist()
         {
             // Arrange
-            var booking = new HotelBooking { Id = 1, RoomNumber = 101, ClientName = "John Doe" };
-            _mockService.Setup(s => s.GetBookingById(1)).Returns((HotelBooking)null);
+            var booking = new Booking
+            {
+                Id = 1,
+                RoomId = 1,
+                UserId = 2,
+                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
+                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
+                Status = "Confirmed"
+            };
+            _mockService.Setup(s => s.GetBookingById(1)).Returns((Booking)null);
 
             // Act
             var result = _controller.Edit(1, booking);
@@ -124,7 +172,15 @@ namespace HotelBookingApi.Tests.Controllers
         public void Delete_ReturnsNoContent_WhenBookingExists()
         {
             // Arrange
-            var booking = new HotelBooking { Id = 1, RoomNumber = 101, ClientName = "John Doe" };
+            var booking = new Booking
+            {
+                Id = 1,
+                RoomId = 1,
+                UserId = 2,
+                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
+                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
+                Status = "Confirmed"
+            };
             _mockService.Setup(s => s.GetBookingById(1)).Returns(booking);
 
             // Act
@@ -138,7 +194,7 @@ namespace HotelBookingApi.Tests.Controllers
         public void Delete_ReturnsNotFound_WhenBookingDoesNotExist()
         {
             // Arrange
-            _mockService.Setup(s => s.GetBookingById(1)).Returns((HotelBooking)null);
+            _mockService.Setup(s => s.GetBookingById(1)).Returns((Booking)null);
 
             // Act
             var result = _controller.Delete(1);

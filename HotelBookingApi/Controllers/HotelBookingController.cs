@@ -19,7 +19,7 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<HotelBooking>> GetAll()
+        public ActionResult<IEnumerable<Booking>> GetAll()
         {
             var bookings = _service.GetAllBookings();
             _logger.LogInformation("Retrieved all bookings.");
@@ -27,7 +27,7 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<HotelBooking> Get(int id)
+        public ActionResult<Booking> Get(int id)
         {
             var booking = _service.GetBookingById(id);
             if (booking == null)
@@ -40,7 +40,7 @@ namespace HotelBookingApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public ActionResult<HotelBooking> Create(HotelBooking booking)
+        public ActionResult<Booking> Create(Booking booking)
         {
             if (!ModelState.IsValid)
             {
@@ -55,7 +55,7 @@ namespace HotelBookingApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public ActionResult<HotelBooking> Edit(int id, HotelBooking booking)
+        public ActionResult<Booking> Edit(int id, Booking booking)
         {
             if (!ModelState.IsValid)
             {
@@ -83,7 +83,7 @@ namespace HotelBookingApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete]
-        public ActionResult<HotelBooking> Delete(int id)
+        public ActionResult<Booking> Delete(int id)
         {
             var booking = _service.GetBookingById(id);
             if (booking == null)
@@ -98,7 +98,7 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet("paged")]
-        public ActionResult<IEnumerable<HotelBooking>> GetAllPaged(int PageNumber = 1, int pageSize = 10)
+        public ActionResult<IEnumerable<Booking>> GetAllPaged(int PageNumber = 1, int pageSize = 10)
         {
             var bookingsPaged = _service.GetAllBookings().Skip((PageNumber - 1) * pageSize).Take(pageSize).ToList();
             _logger.LogInformation("Retrieved all bookings.");

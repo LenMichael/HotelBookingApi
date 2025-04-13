@@ -16,8 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure Database Context
 // ----------------------------
 
+//builder.Services.AddDbContext<ApiContext>(opt =>
+//    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<ApiContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // ------------------------------
 // Register Application Services
