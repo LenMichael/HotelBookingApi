@@ -20,6 +20,5 @@ namespace HotelBookingApi.Models
         [EmailAddress]
         public string? Email { get; set; }
         public ICollection<Room> Rooms { get; set; } = new List<Room>();
-        public ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
 }

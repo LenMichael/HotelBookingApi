@@ -11,7 +11,12 @@ namespace HotelBookingApi.Data
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Employee> Employees { get; set; }
-        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Log> Logs { get; set; }
+        public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<MaintenanceRequest> MaintenanceRequests { get; set; }
+        public DbSet<Shift> Shifts { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
 
         public ApiContext(DbContextOptions<ApiContext> options) : base(options) { }
         public virtual DbSet<Booking> GetBookings()
@@ -24,7 +29,7 @@ namespace HotelBookingApi.Data
         {
             modelBuilder.Entity<User>().HasData(
                 new User { Id = 1, Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), Role = "Admin" },
-                new User { Id = 2, Username = "customer", PasswordHash = BCrypt.Net.BCrypt.HashPassword("customer123"), Role = "Customer" },
+                new User { Id = 2, Username = "itsupport", PasswordHash = BCrypt.Net.BCrypt.HashPassword("itsupport123"), Role = "IT" },
                 new User { Id = 3, Username = "employee", PasswordHash = BCrypt.Net.BCrypt.HashPassword("employee123"), Role = "Employee" }
             );
 
@@ -123,21 +128,118 @@ namespace HotelBookingApi.Data
                 new Employee { Id = 2, UserId = 2, HotelId = 2, Position = "Receptionist" }
             );
 
-            modelBuilder.Entity<Review>()
-                .HasOne(r => r.Hotel)
-                .WithMany(h => h.Reviews)
-                .HasForeignKey(r => r.HotelId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Review>()
-                .HasOne(r => r.User)
+            // Logs -> Users
+            modelBuilder.Entity<Log>()
+                .HasOne(l => l.User)
                 .WithMany()
-                .HasForeignKey(r => r.UserId)
+                .HasForeignKey(l => l.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Review>().HasData(
-                new Review { Id = 1, HotelId = 1, UserId = 2, Rating = 5, Comment = "Amazing experience!" },
-                new Review { Id = 2, HotelId = 2, UserId = 2, Rating = 4, Comment = "Great service, but the room was small." }
+            modelBuilder.Entity<Log>().HasData(
+                new Log { Id = 1, UserId = 1, Action = "Created a booking", Timestamp = DateTime.UtcNow },
+                new Log { Id = 2, UserId = 2, Action = "Updated room details", Timestamp = DateTime.UtcNow }
+            );
+
+            modelBuilder.Entity<Inventory>().HasData(
+                new Inventory { Id = 1, Name = "Towels", Quantity = 50, LastUpdated = DateTime.UtcNow },
+                new Inventory { Id = 2, Name = "Shampoo", Quantity = 30, LastUpdated = DateTime.UtcNow },
+                new Inventory { Id = 3, Name = "Soap", Quantity = 100, LastUpdated = DateTime.UtcNow }
+            );
+
+            modelBuilder.Entity<MaintenanceRequest>()
+                .HasOne(m => m.Room)
+                .WithMany()
+                .HasForeignKey(m => m.RoomId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<MaintenanceRequest>().HasData(
+                new MaintenanceRequest
+                {
+                    Id = 1,
+                    RoomId = 1,
+                    Description = "Air conditioning not working",
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new MaintenanceRequest
+                {
+                    Id = 2,
+                    RoomId = 2,
+                    Description = "Leaking faucet in bathroom",
+                    Status = "In Progress",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                }
+            );
+
+            // Shifts -> Employees
+            modelBuilder.Entity<Shift>()
+                .HasOne(s => s.Employee)
+                .WithMany()
+                .HasForeignKey(s => s.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Shift>().HasData(
+                new Shift
+                {
+                    Id = 1,
+                    EmployeeId = 1,
+                    StartTime = DateTime.SpecifyKind(new DateTime(2025, 4, 20, 8, 0, 0), DateTimeKind.Utc),
+                    EndTime = DateTime.SpecifyKind(new DateTime(2025, 4, 20, 16, 0, 0), DateTimeKind.Utc),
+                    Role = "Manager"
+                },
+                new Shift
+                {
+                    Id = 2,
+                    EmployeeId = 2,
+                    StartTime = DateTime.SpecifyKind(new DateTime(2025, 4, 20, 16, 0, 0), DateTimeKind.Utc),
+                    EndTime = DateTime.SpecifyKind(new DateTime(2025, 4, 20, 23, 59, 59), DateTimeKind.Utc),
+                    Role = "Receptionist"
+                }
+            );
+
+            modelBuilder.Entity<Event>().HasData(
+                new Event
+                {
+                    Id = 1,
+                    Name = "Annual Conference",
+                    Date = DateTime.SpecifyKind(new DateTime(2025, 6, 15), DateTimeKind.Utc),
+                    Location = "Conference Hall A",
+                    Organizer = "John Doe",
+                    Description = "An annual conference for industry professionals."
+                },
+                new Event
+                {
+                    Id = 2,
+                    Name = "Wedding Ceremony",
+                    Date = DateTime.SpecifyKind(new DateTime(2025, 7, 20), DateTimeKind.Utc),
+                    Location = "Banquet Hall",
+                    Organizer = "Jane Smith",
+                    Description = "A beautiful wedding ceremony for 200 guests."
+                }
+            );
+
+            modelBuilder.Entity<Feedback>()
+                .HasOne(f => f.Employee)
+                .WithMany()
+                .HasForeignKey(f => f.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Feedback>().HasData(
+                new Feedback
+                {
+                    Id = 1,
+                    EmployeeId = 1,
+                    Message = "The new booking system is very efficient.",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Feedback
+                {
+                    Id = 2,
+                    EmployeeId = 2,
+                    Message = "We need more training on the inventory management system.",
+                    CreatedAt = DateTime.UtcNow
+                }
             );
 
             base.OnModelCreating(modelBuilder);

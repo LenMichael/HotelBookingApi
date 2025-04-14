@@ -15,6 +15,23 @@ namespace HotelBookingApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Location = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Organizer = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Hotels",
                 columns: table => new
                 {
@@ -28,6 +45,21 @@ namespace HotelBookingApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Hotels", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Inventories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,27 +127,20 @@ namespace HotelBookingApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
+                name: "Logs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    HotelId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    Rating = table.Column<int>(type: "integer", nullable: false),
-                    Comment = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
+                    Action = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.PrimaryKey("PK_Logs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reviews_Hotels_HotelId",
-                        column: x => x.HotelId,
-                        principalTable: "Hotels",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Reviews_Users_UserId",
+                        name: "FK_Logs_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -152,6 +177,72 @@ namespace HotelBookingApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MaintenanceRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoomId = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaintenanceRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaintenanceRequests_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Feedbacks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
+                    Message = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Shifts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Role = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shifts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Shifts_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Payments",
                 columns: table => new
                 {
@@ -174,6 +265,15 @@ namespace HotelBookingApi.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Events",
+                columns: new[] { "Id", "Date", "Description", "Location", "Name", "Organizer" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 6, 15, 0, 0, 0, 0, DateTimeKind.Utc), "An annual conference for industry professionals.", "Conference Hall A", "Annual Conference", "John Doe" },
+                    { 2, new DateTime(2025, 7, 20, 0, 0, 0, 0, DateTimeKind.Utc), "A beautiful wedding ceremony for 200 guests.", "Banquet Hall", "Wedding Ceremony", "Jane Smith" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Hotels",
                 columns: new[] { "Id", "Address", "Email", "Name", "PhoneNumber" },
                 values: new object[,]
@@ -183,13 +283,23 @@ namespace HotelBookingApi.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Inventories",
+                columns: new[] { "Id", "LastUpdated", "Name", "Quantity" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(691), "Towels", 50 },
+                    { 2, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(691), "Shampoo", 30 },
+                    { 3, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(692), "Soap", 100 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "PasswordHash", "Role", "Username" },
                 values: new object[,]
                 {
-                    { 1, "$2a$11$9ThRVpZ8TWnuJBmJFwpUO.JmWabfE4clvNLgdpofgl.0hDEUQraLC", "Admin", "admin" },
-                    { 2, "$2a$11$Dk/2UJjUzzpySt..VZfu9efehf.R1rtgaXbqGyuU6waCzIUNCZSDi", "Customer", "customer" },
-                    { 3, "$2a$11$biap.QH4yjCxY8yz/JRWfu1sM8sVSCEjz6LcIcsjtzU/CO6e/YtKu", "Employee", "employee" }
+                    { 1, "$2a$11$O/yKVJZZZiCuCVwkHlilvezkvyLq32axmVVGz7OHqOqx/uxeoeSji", "Admin", "admin" },
+                    { 2, "$2a$11$armLdhOdAWMfMuczK2IoW.NHspaB7DDrXsprI3Tg6svqTZfFaTg/O", "IT", "itsupport" },
+                    { 3, "$2a$11$wdykDlOTS5Z/aQYsAEAcB.qkg/wZUuN5YxgPdyqSf6dkhlo78eHjG", "Employee", "employee" }
                 });
 
             migrationBuilder.InsertData(
@@ -202,12 +312,12 @@ namespace HotelBookingApi.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Reviews",
-                columns: new[] { "Id", "Comment", "HotelId", "Rating", "UserId" },
+                table: "Logs",
+                columns: new[] { "Id", "Action", "Timestamp", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Amazing experience!", 1, 5, 2 },
-                    { 2, "Great service, but the room was small.", 2, 4, 2 }
+                    { 1, "Created a booking", new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(660), 1 },
+                    { 2, "Updated room details", new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(662), 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -227,6 +337,33 @@ namespace HotelBookingApi.Migrations
                 {
                     { 1, new DateTime(2025, 4, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 4, 25, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Confirmed", 3 },
                     { 2, new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 2, "Cancelled", 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Feedbacks",
+                columns: new[] { "Id", "CreatedAt", "EmployeeId", "Message" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(2823), 1, "The new booking system is very efficient." },
+                    { 2, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(2824), 2, "We need more training on the inventory management system." }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MaintenanceRequests",
+                columns: new[] { "Id", "CreatedAt", "Description", "RoomId", "Status", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(1425), "Air conditioning not working", 1, "Pending", null },
+                    { 2, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(1426), "Leaking faucet in bathroom", 2, "In Progress", new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(1427) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Shifts",
+                columns: new[] { "Id", "EmployeeId", "EndTime", "Role", "StartTime" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2025, 4, 20, 16, 0, 0, 0, DateTimeKind.Utc), "Manager", new DateTime(2025, 4, 20, 8, 0, 0, 0, DateTimeKind.Utc) },
+                    { 2, 2, new DateTime(2025, 4, 20, 23, 59, 59, 0, DateTimeKind.Utc), "Receptionist", new DateTime(2025, 4, 20, 16, 0, 0, 0, DateTimeKind.Utc) }
                 });
 
             migrationBuilder.InsertData(
@@ -259,40 +396,65 @@ namespace HotelBookingApi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_EmployeeId",
+                table: "Feedbacks",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Logs_UserId",
+                table: "Logs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceRequests_RoomId",
+                table: "MaintenanceRequests",
+                column: "RoomId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payments_BookingId",
                 table: "Payments",
                 column: "BookingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_HotelId",
-                table: "Reviews",
-                column: "HotelId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_UserId",
-                table: "Reviews",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Rooms_HotelId",
                 table: "Rooms",
                 column: "HotelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shifts_EmployeeId",
+                table: "Shifts",
+                column: "EmployeeId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Employees");
+                name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Feedbacks");
+
+            migrationBuilder.DropTable(
+                name: "Inventories");
+
+            migrationBuilder.DropTable(
+                name: "Logs");
+
+            migrationBuilder.DropTable(
+                name: "MaintenanceRequests");
 
             migrationBuilder.DropTable(
                 name: "Payments");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
+                name: "Shifts");
 
             migrationBuilder.DropTable(
                 name: "Bookings");
+
+            migrationBuilder.DropTable(
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Rooms");
