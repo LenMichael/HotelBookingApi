@@ -13,31 +13,35 @@ namespace HotelBookingApi.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Event>> GetAllAsync()
+        public async Task<IEnumerable<Event>> GetAllAsync(CancellationToken cancellationToken)
         {
-            return await _context.Events.ToListAsync();
+            return await _context.Events.ToListAsync(cancellationToken);
         }
 
-        public async Task<Event> GetByIdAsync(int id)
+        public async Task<Event?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await _context.Events.FindAsync(id);
+            return await _context.Events.FindAsync( id, cancellationToken);
         }
 
-        public async Task<Event> AddAsync(Event eventModel)
+        public async Task<Event> AddAsync(Event eventItem, CancellationToken cancellationToken)
         {
-            _context.Events.Add(eventModel);
-            await _context.SaveChangesAsync();
-            return eventModel;
+            _context.Events.Add(eventItem);
+            await _context.SaveChangesAsync(cancellationToken);
+            return eventItem;
         }
 
-        public async Task<Event> UpdateAsync(Event eventModel)
+        public async Task<Event?> UpdateAsync(int id, Event eventItem, CancellationToken cancellationToken)
         {
-            _context.Events.Update(eventModel);
-            await _context.SaveChangesAsync();
-            return eventModel;
+            var existingEvent = await _context.Events.FindAsync( id, cancellationToken);
+            if (existingEvent == null) return null;
+
+            _context.Entry(existingEvent).CurrentValues.SetValues(eventItem);
+            await _context.SaveChangesAsync(cancellationToken);
+            return existingEvent;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+
+        public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
         {
             var eventModel = await _context.Events.FindAsync(id);
             if (eventModel == null) return false;

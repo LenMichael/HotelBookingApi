@@ -4,10 +4,10 @@ namespace HotelBookingApi.Repositories
 {
     public interface IMaintenanceRequestRepository
     {
-        Task<IEnumerable<MaintenanceRequest>> GetAllAsync();
-        Task<MaintenanceRequest> GetByIdAsync(int id);
-        Task<MaintenanceRequest> AddAsync(MaintenanceRequest request);
-        Task<MaintenanceRequest> UpdateAsync(MaintenanceRequest request);
-        Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<MaintenanceRequest>> GetAll(CancellationToken cancellationToken);
+        Task<MaintenanceRequest?> GetById(int id, CancellationToken cancellationToken);
+        Task<MaintenanceRequest> Add(MaintenanceRequest request, CancellationToken cancellationToken);
+        Task<MaintenanceRequest> Update(MaintenanceRequest request, CancellationToken cancellationToken);
+        Task<bool> Delete(int id, CancellationToken cancellationToken);
     }
 }

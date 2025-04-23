@@ -4,10 +4,10 @@ namespace HotelBookingApi.Services
 {
     public interface IFeedbackService
     {
-        Task<IEnumerable<Feedback>> GetAllFeedbackAsync();
-        Task<Feedback?> GetFeedbackByIdAsync(int id);
-        Task<Feedback> CreateFeedbackAsync(Feedback feedback);
-        Task<Feedback?> UpdateFeedbackAsync(int id, Feedback feedback);
-        Task<bool> DeleteFeedbackAsync(int id);
+        Task<IEnumerable<Feedback>> GetAllFeedback(CancellationToken cancellationToken);
+        Task<Feedback?> GetFeedbackById(int id, CancellationToken cancellationToken);
+        Task<Feedback> CreateFeedback(Feedback feedback, CancellationToken cancellationToken);
+        Task<Feedback?> UpdateFeedback(int id, Feedback feedback, CancellationToken cancellationToken);
+        Task<bool> DeleteFeedback(int id, CancellationToken cancellationToken);
     }
 }

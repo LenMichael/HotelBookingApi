@@ -25,36 +25,19 @@ namespace HotelBookingApi.Tests.Controllers
             _mockLogger = new Mock<ILogger<HotelBookingController>>();
             _controller = new HotelBookingController(_mockService.Object, _mockLogger.Object);
         }
-
         [Fact]
-        public void GetAll_ReturnsOkResult_WithListOfBookings()
+        public async Task GetAll_ReturnsOkResult_WithListOfBookings()
         {
             // Arrange
             var bookings = new List<Booking>
             {
-                new Booking
-                {
-                    Id = 1,
-                    RoomId = 1,
-                    UserId = 2,
-                    CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
-                    CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
-                    Status = "Confirmed"
-                },
-                new Booking
-                {
-                    Id = 2,
-                    RoomId = 2,
-                    UserId = 2,
-                    CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 5, 1), DateTimeKind.Utc),
-                    CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 5, 5), DateTimeKind.Utc),
-                    Status = "Cancelled"
-                }
+                new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" },
+                new Booking { Id = 2, RoomId = 102, UserId = 2, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(3), Status = "Cancelled" }
             };
-            _mockService.Setup(s => s.GetAllBookings()).Returns(bookings);
+            _mockService.Setup(s => s.GetAllBookings(It.IsAny<CancellationToken>())).ReturnsAsync(bookings);
 
             // Act
-            var result = _controller.GetAll();
+            var result = await _controller.GetAll(CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -63,22 +46,14 @@ namespace HotelBookingApi.Tests.Controllers
         }
 
         [Fact]
-        public void Get_ReturnsOkResult_WhenBookingExists()
+        public async Task GetById_ReturnsOkResult_WhenBookingExists()
         {
             // Arrange
-            var booking = new Booking
-            {
-                Id = 1,
-                RoomId = 1,
-                UserId = 2,
-                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
-                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
-                Status = "Confirmed"
-            };
-            _mockService.Setup(s => s.GetBookingById(1)).Returns(booking);
+            var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
+            _mockService.Setup(s => s.GetBookingById(1, It.IsAny<CancellationToken>())).ReturnsAsync(booking);
 
             // Act
-            var result = _controller.Get(1);
+            var result = await _controller.GetById(1, CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -87,58 +62,27 @@ namespace HotelBookingApi.Tests.Controllers
         }
 
         [Fact]
-        public void Get_ReturnsNotFound_WhenBookingDoesNotExist()
+        public async Task GetById_ReturnsNotFound_WhenBookingDoesNotExist()
         {
             // Arrange
-            _mockService.Setup(s => s.GetBookingById(1)).Returns((Booking)null);
+            _mockService.Setup(s => s.GetBookingById(1, It.IsAny<CancellationToken>())).ReturnsAsync((Booking)null);
 
             // Act
-            var result = _controller.Get(1);
+            var result = await _controller.GetById(1, CancellationToken.None);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
-        public void Create_ReturnsOkResult_WhenBookingIsValid()
+        public async Task Create_ReturnsOkResult_WhenBookingIsValid()
         {
             // Arrange
-            var booking = new Booking
-            {
-                Id = 1,
-                RoomId = 1,
-                UserId = 2,
-                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
-                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
-                Status = "Confirmed"
-            };
+            var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
+            _mockService.Setup(s => s.CreateBooking(booking, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
             // Act
-            var result = _controller.Create(booking);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnBooking = Assert.IsType<Booking>(okResult.Value);
-            Assert.Equal(booking.Room.RoomNumber, returnBooking.Room.RoomNumber);
-        }
-
-        [Fact]
-        public void Edit_ReturnsOkResult_WhenBookingIsValid()
-        {
-            // Arrange
-            var booking = new Booking
-            {
-                Id = 1,
-                RoomId = 1,
-                UserId = 2,
-                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
-                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
-                Status = "Confirmed"
-            };
-            _mockService.Setup(s => s.GetBookingById(1)).Returns(booking);
-
-            // Act
-            var result = _controller.Edit(1, booking);
+            var result = await _controller.Create(booking, CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -147,57 +91,56 @@ namespace HotelBookingApi.Tests.Controllers
         }
 
         [Fact]
-        public void Edit_ReturnsNotFound_WhenBookingDoesNotExist()
+        public async Task Edit_ReturnsOkResult_WhenBookingIsValid()
         {
             // Arrange
-            var booking = new Booking
-            {
-                Id = 1,
-                RoomId = 1,
-                UserId = 2,
-                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
-                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
-                Status = "Confirmed"
-            };
-            _mockService.Setup(s => s.GetBookingById(1)).Returns((Booking)null);
+            var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
+            _mockService.Setup(s => s.UpdateBooking(booking, It.IsAny<CancellationToken>())).ReturnsAsync(booking);
 
             // Act
-            var result = _controller.Edit(1, booking);
+            var result = await _controller.Edit(1, booking, CancellationToken.None);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnBooking = Assert.IsType<Booking>(okResult.Value);
+            Assert.Equal(1, returnBooking.Id);
+        }
+
+        [Fact]
+        public async Task Edit_ReturnsNotFound_WhenBookingDoesNotExist()
+        {
+            // Arrange
+            var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
+            _mockService.Setup(s => s.UpdateBooking(booking, It.IsAny<CancellationToken>())).ReturnsAsync((Booking)null);
+
+            // Act
+            var result = await _controller.Edit(1, booking, CancellationToken.None);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
-        public void Delete_ReturnsNoContent_WhenBookingExists()
+        public async Task Delete_ReturnsNoContent_WhenBookingExists()
         {
             // Arrange
-            var booking = new Booking
-            {
-                Id = 1,
-                RoomId = 1,
-                UserId = 2,
-                CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
-                CheckOutDate = DateTime.SpecifyKind(new DateTime(2025, 4, 25), DateTimeKind.Utc),
-                Status = "Confirmed"
-            };
-            _mockService.Setup(s => s.GetBookingById(1)).Returns(booking);
+            _mockService.Setup(s => s.DeleteBooking(1, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
             // Act
-            var result = _controller.Delete(1);
+            var result = await _controller.Delete(1, CancellationToken.None);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]
-        public void Delete_ReturnsNotFound_WhenBookingDoesNotExist()
+        public async Task Delete_ReturnsNotFound_WhenBookingDoesNotExist()
         {
             // Arrange
-            _mockService.Setup(s => s.GetBookingById(1)).Returns((Booking)null);
+            _mockService.Setup(s => s.DeleteBooking(1, It.IsAny<CancellationToken>())).ReturnsAsync(false);
 
             // Act
-            var result = _controller.Delete(1);
+            var result = await _controller.Delete(1, CancellationToken.None);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBookingApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/events")]
     [ApiController]
     public class EventController : ControllerBase
     {
@@ -16,41 +16,41 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEvents()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var events = await _eventService.GetAllEventsAsync();
+            var events = await _eventService.GetAllEventsAsync(cancellationToken);
             return Ok(events);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetEventById(int id)
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
-            var eventItem = await _eventService.GetEventByIdAsync(id);
+            var eventItem = await _eventService.GetEventByIdAsync(id, cancellationToken);
             if (eventItem == null)
                 return NotFound("Event not found.");
             return Ok(eventItem);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEvent([FromBody] Event eventItem)
+        public async Task<IActionResult> Create([FromBody] Event eventItem, CancellationToken cancellationToken)
         {
-            var createdEvent = await _eventService.CreateEventAsync(eventItem);
-            return CreatedAtAction(nameof(GetEventById), new { id = createdEvent.Id }, createdEvent);
+            var createdEvent = await _eventService.CreateEventAsync(eventItem, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = createdEvent.Id }, createdEvent);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEvent(int id, [FromBody] Event eventItem)
+        public async Task<IActionResult> Update(int id, [FromBody] Event eventItem, CancellationToken cancellationToken)
         {
-            var updatedEvent = await _eventService.UpdateEventAsync(id, eventItem);
+            var updatedEvent = await _eventService.UpdateEventAsync(id, eventItem, cancellationToken);
             if (updatedEvent == null)
                 return NotFound("Event not found.");
             return Ok(updatedEvent);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEvent(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var isDeleted = await _eventService.DeleteEventAsync(id);
+            var isDeleted = await _eventService.DeleteEventAsync(id, cancellationToken);
             if (!isDeleted)
                 return NotFound("Event not found.");
             return NoContent();

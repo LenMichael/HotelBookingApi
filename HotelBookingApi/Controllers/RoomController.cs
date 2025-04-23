@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HotelBookingApi.Controllers
 {
 
-    [Route("api/[controller]/[action]")]
+    [Route("api/rooms")]
     [ApiController]
     public class RoomController : ControllerBase
     {
@@ -16,9 +16,9 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllRooms()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var rooms = await _roomService.GetAllRoomsAsync();
+            var rooms = await _roomService.GetAllRooms(cancellationToken);
             return Ok(rooms);
         }
     }

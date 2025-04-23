@@ -12,29 +12,29 @@ namespace HotelBookingApi.Services
             _repository = repository;
         }
 
-        public IEnumerable<Booking> GetAllBookings()
+        public async Task<IEnumerable<Booking>> GetAllBookings(CancellationToken cancellationToken)
         {
-            return _repository.GetAll();
+            return await _repository.GetAll(cancellationToken);
         }
 
-        public Booking GetBookingById(int id)
+        public async Task<Booking?> GetBookingById(int id, CancellationToken cancellationToken)
         {
-            return _repository.GetById(id);
+            return await _repository.GetById(id, cancellationToken);
         }
 
-        public void CreateBooking(Booking booking)
+        public async Task CreateBooking(Booking booking, CancellationToken cancellationToken)
         {
-            _repository.Add(booking);
+            await _repository.Add(booking, cancellationToken);
         }
 
-        public void UpdateBooking(Booking booking)
+        public async Task<Booking?> UpdateBooking(Booking booking, CancellationToken cancellationToken)
         {
-            _repository.Update(booking);
+            return await _repository.Update(booking, cancellationToken);
         }
 
-        public void DeleteBooking(int id)
+        public async Task<bool> DeleteBooking(int id, CancellationToken cancellationToken)
         {
-            _repository.Delete(id);
+            return await _repository.Delete(id, cancellationToken);
         }
     }
 }

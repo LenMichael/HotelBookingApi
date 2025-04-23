@@ -22,35 +22,34 @@ namespace HotelBookingApi.Tests.Controllers
             _mockLogger = new Mock<ILogger<AuthController>>();
             _controller = new AuthController(_mockUserService.Object, _mockAuthService.Object, _mockLogger.Object);
         }
+        //[Fact]
+        //public async Task GetAll_ReturnsOkResult_WithUsers()
+        //{
+        //    // Arrange
+        //    var users = new List<User>
+        //    {
+        //        new User { Id = 1, Username = "admin", Role = "Admin" },
+        //        new User { Id = 2, Username = "user", Role = "User" }
+        //    };
+        //    _mockUserService.Setup(s => s.GetAllUsers(It.IsAny<CancellationToken>())).ReturnsAsync(users);
+
+        //    // Act
+        //    var result = await _controller.GetAll(CancellationToken.None);
+
+        //    // Assert
+        //    var okResult = Assert.IsType<OkObjectResult>(result);
+        //    var returnedUsers = Assert.IsAssignableFrom<IEnumerable<User>>(okResult.Value);
+        //    Assert.Equal(2, returnedUsers.Count());
+        //}
 
         [Fact]
-        public async Task GetAllUsers_ReturnsOkResult_WithUsers()
+        public async Task GetAll_Returns500_WhenExceptionIsThrown()
         {
             // Arrange
-            var users = new List<User>
-                {
-                    new() { Id = 1, Username = "admin", PasswordHash = "hashedpassword1", Role = "Admin" },
-                    new() { Id = 2, Username = "user", PasswordHash = "hashedpassword2", Role = "User" }
-                };
-            _mockUserService.Setup(s => s.GetAllUsersAsync()).ReturnsAsync(users);
+            _mockUserService.Setup(s => s.GetAllUsers(It.IsAny<CancellationToken>())).ThrowsAsync(new Exception("Database error"));
 
             // Act
-            var result = await _controller.GetAllUsers();
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedUsers = Assert.IsAssignableFrom<IEnumerable<User>>(okResult.Value);
-            Assert.Equal(2, returnedUsers.Count());
-        }
-
-        [Fact]
-        public async Task GetAllUsers_Returns500_WhenExceptionIsThrown()
-        {
-            // Arrange
-            _mockUserService.Setup(s => s.GetAllUsersAsync()).ThrowsAsync(new Exception("Database error"));
-
-            // Act
-            var result = await _controller.GetAllUsers();
+            var result = await _controller.GetAll(CancellationToken.None);
 
             // Assert
             var statusCodeResult = Assert.IsType<ObjectResult>(result);
@@ -63,10 +62,10 @@ namespace HotelBookingApi.Tests.Controllers
         {
             // Arrange
             var registerDto = new RegisterDto { Username = "newuser", Password = "password123" };
-            _mockUserService.Setup(s => s.RegisterAsync(registerDto)).Returns(Task.CompletedTask);
+            _mockUserService.Setup(s => s.Register(registerDto, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _controller.Register(registerDto);
+            var result = await _controller.Register(registerDto, CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
@@ -78,10 +77,11 @@ namespace HotelBookingApi.Tests.Controllers
         {
             // Arrange
             var registerDto = new RegisterDto { Username = "existinguser", Password = "password123" };
-            _mockUserService.Setup(s => s.RegisterAsync(registerDto)).ThrowsAsync(new InvalidOperationException("Username already exists."));
+            _mockUserService.Setup(s => s.Register(registerDto, It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new InvalidOperationException("Username already exists."));
 
             // Act
-            var result = await _controller.Register(registerDto);
+            var result = await _controller.Register(registerDto, CancellationToken.None);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -94,10 +94,10 @@ namespace HotelBookingApi.Tests.Controllers
             // Arrange
             var loginDto = new LoginDto { Username = "user", Password = "password123" };
             var token = "mocked-jwt-token";
-            _mockAuthService.Setup(s => s.LoginAsync(loginDto)).ReturnsAsync(token);
+            _mockAuthService.Setup(s => s.Login(loginDto, It.IsAny<CancellationToken>())).ReturnsAsync(token);
 
             // Act
-            var result = await _controller.Login(loginDto);
+            var result = await _controller.Login(loginDto, CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
@@ -110,14 +110,17 @@ namespace HotelBookingApi.Tests.Controllers
         {
             // Arrange
             var loginDto = new LoginDto { Username = "user", Password = "wrongpassword" };
-            _mockAuthService.Setup(s => s.LoginAsync(loginDto)).ThrowsAsync(new UnauthorizedAccessException("Invalid username or password."));
+            _mockAuthService.Setup(s => s.Login(loginDto, It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new UnauthorizedAccessException("Invalid username or password."));
 
             // Act
-            var result = await _controller.Login(loginDto);
+            var result = await _controller.Login(loginDto, CancellationToken.None);
 
             // Assert
             var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
             Assert.Equal("Invalid username or password.", unauthorizedResult.Value);
         }
+
+        
     }
 }

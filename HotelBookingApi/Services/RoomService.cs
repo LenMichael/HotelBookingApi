@@ -12,24 +12,24 @@ namespace HotelBookingApi.Services
             _roomRepository = roomRepository;
         }
 
-        public async Task<IEnumerable<Room>> GetAllRoomsAsync()
+        public async Task<IEnumerable<Room>> GetAllRooms(CancellationToken cancellationToken)
         {
-            return await _roomRepository.GetAllAsync();
+            return await _roomRepository.GetAll(cancellationToken);
         }
 
-        public async Task<Room> GetRoomByIdAsync(int id)
+        public async Task<Room?> GetRoomById(int id, CancellationToken cancellationToken)
         {
-            return await _roomRepository.GetByIdAsync(id);
+            return await _roomRepository.GetById(id, cancellationToken);
         }
 
-        public async Task<Room> CreateRoomAsync(Room room)
+        public async Task<Room> CreateRoom(Room room, CancellationToken cancellationToken)
         {
-            return await _roomRepository.AddAsync(room);
+            return await _roomRepository.Add(room, cancellationToken);
         }
 
-        public async Task<Room> UpdateRoomAsync(int id, Room room)
+        public async Task<Room?> UpdateRoom(int id, Room room, CancellationToken cancellationToken)
         {
-            var existingRoom = await _roomRepository.GetByIdAsync(id);
+            var existingRoom = await _roomRepository.GetById(id, cancellationToken);
             if (existingRoom == null) return null;
 
             existingRoom.RoomNumber = room.RoomNumber;
@@ -37,12 +37,12 @@ namespace HotelBookingApi.Services
             existingRoom.Price = room.Price;
             existingRoom.HotelId = room.HotelId;
 
-            return await _roomRepository.UpdateAsync(existingRoom);
+            return await _roomRepository.Update(existingRoom, cancellationToken);
         }
 
-        public async Task<bool> DeleteRoomAsync(int id)
+        public async Task<bool> DeleteRoom(int id, CancellationToken cancellationToken)
         {
-            return await _roomRepository.DeleteAsync(id);
+            return await _roomRepository.Delete(id, cancellationToken);
         }
     }
 }

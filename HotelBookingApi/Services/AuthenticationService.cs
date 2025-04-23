@@ -20,9 +20,9 @@ namespace HotelBookingApi.Services
             _configuration = configuration;
         }
 
-        public async Task<string> LoginAsync(LoginDto loginDto)
+        public async Task<string> Login(LoginDto loginDto, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == loginDto.Username);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == loginDto.Username, cancellationToken);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
                 throw new UnauthorizedAccessException("Invalid username or password.");

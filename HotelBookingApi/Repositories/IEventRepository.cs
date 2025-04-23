@@ -4,10 +4,10 @@ namespace HotelBookingApi.Repositories
 {
     public interface IEventRepository
     {
-        Task<IEnumerable<Event>> GetAllAsync();
-        Task<Event> GetByIdAsync(int id);
-        Task<Event> AddAsync(Event eventModel);
-        Task<Event> UpdateAsync(Event eventModel);
-        Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<Event>> GetAllAsync(CancellationToken cancellationToken);
+        Task<Event?> GetByIdAsync(int id, CancellationToken cancellationToken);
+        Task<Event> AddAsync(Event eventModel, CancellationToken cancellationToken);
+        Task<Event?> UpdateAsync(int id, Event eventModel, CancellationToken cancellationToken);
+        Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
     }
 }

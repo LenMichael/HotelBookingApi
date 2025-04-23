@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBookingApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/shifts")]
     [ApiController]
     public class ShiftController : ControllerBase
     {
@@ -15,42 +15,47 @@ namespace HotelBookingApi.Controllers
             _shiftService = shiftService;
         }
 
+        // GET: api/shifts
         [HttpGet]
-        public async Task<IActionResult> GetAllShifts()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var shifts = await _shiftService.GetAllShiftsAsync();
+            var shifts = await _shiftService.GetAllShiftsAsync(cancellationToken);
             return Ok(shifts);
         }
 
+        // GET: api/shifts/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetShiftById(int id)
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
-            var shift = await _shiftService.GetShiftByIdAsync(id);
+            var shift = await _shiftService.GetShiftByIdAsync(id, cancellationToken);
             if (shift == null)
                 return NotFound("Shift not found.");
             return Ok(shift);
         }
 
+        // POST: api/shifts
         [HttpPost]
-        public async Task<IActionResult> CreateShift([FromBody] Shift shift)
+        public async Task<IActionResult> CreateShift([FromBody] Shift shift, CancellationToken cancellationToken)
         {
-            var createdShift = await _shiftService.CreateShiftAsync(shift);
-            return CreatedAtAction(nameof(GetShiftById), new { id = createdShift.Id }, createdShift);
+            var createdShift = await _shiftService.CreateShiftAsync(shift, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = createdShift.Id }, createdShift);
         }
 
+        // PUT: api/shifts/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateShift(int id, [FromBody] Shift shift)
+        public async Task<IActionResult> UpdateShift(int id, [FromBody] Shift shift, CancellationToken cancellationToken)
         {
-            var updatedShift = await _shiftService.UpdateShiftAsync(id, shift);
+            var updatedShift = await _shiftService.UpdateShiftAsync(id, shift, cancellationToken);
             if (updatedShift == null)
                 return NotFound("Shift not found.");
             return Ok(updatedShift);
         }
 
+        // DELETE: api/shifts/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteShift(int id)
+        public async Task<IActionResult> DeleteShift(int id, CancellationToken cancellationToken)
         {
-            var isDeleted = await _shiftService.DeleteShiftAsync(id);
+            var isDeleted = await _shiftService.DeleteShiftAsync(id, cancellationToken);
             if (!isDeleted)
                 return NotFound("Shift not found.");
             return NoContent();

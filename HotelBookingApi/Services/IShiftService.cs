@@ -4,10 +4,10 @@ namespace HotelBookingApi.Services
 {
     public interface IShiftService
     {
-        Task<IEnumerable<Shift>> GetAllShiftsAsync();
-        Task<Shift> GetShiftByIdAsync(int id);
-        Task<Shift> CreateShiftAsync(Shift shift);
-        Task<Shift> UpdateShiftAsync(int id, Shift shift);
-        Task<bool> DeleteShiftAsync(int id);
+        Task<IEnumerable<Shift>> GetAllShiftsAsync(CancellationToken cancellationToken);
+        Task<Shift?> GetShiftByIdAsync(int id, CancellationToken cancellationToken);
+        Task<Shift> CreateShiftAsync(Shift shift, CancellationToken cancellationToken);
+        Task<Shift?> UpdateShiftAsync(int id, Shift shift, CancellationToken cancellationToken);
+        Task<bool> DeleteShiftAsync(int id, CancellationToken cancellationToken);
     }
 }

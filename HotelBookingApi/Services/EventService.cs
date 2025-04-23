@@ -12,38 +12,29 @@ namespace HotelBookingApi.Services
             _eventRepository = eventRepository;
         }
 
-        public async Task<IEnumerable<Event>> GetAllEventsAsync()
+        public async Task<IEnumerable<Event>> GetAllEventsAsync(CancellationToken cancellationToken)
         {
-            return await _eventRepository.GetAllAsync();
+            return await _eventRepository.GetAllAsync(cancellationToken);
         }
 
-        public async Task<Event> GetEventByIdAsync(int id)
+        public async Task<Event?> GetEventByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await _eventRepository.GetByIdAsync(id);
+            return await _eventRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public async Task<Event> CreateEventAsync(Event eventModel)
+        public async Task<Event> CreateEventAsync(Event eventModel, CancellationToken cancellationToken)
         {
-            return await _eventRepository.AddAsync(eventModel);
+            return await _eventRepository.AddAsync(eventModel, cancellationToken);
         }
 
-        public async Task<Event> UpdateEventAsync(int id, Event eventModel)
+        public async Task<Event?> UpdateEventAsync(int id, Event eventModel, CancellationToken cancellationToken)
         {
-            var existingEvent = await _eventRepository.GetByIdAsync(id);
-            if (existingEvent == null) return null;
-
-            existingEvent.Name = eventModel.Name;
-            existingEvent.Date = eventModel.Date;
-            existingEvent.Location = eventModel.Location;
-            existingEvent.Organizer = eventModel.Organizer;
-            existingEvent.Description = eventModel.Description;
-
-            return await _eventRepository.UpdateAsync(existingEvent);
+            return await _eventRepository.UpdateAsync(id, eventModel, cancellationToken);
         }
 
-        public async Task<bool> DeleteEventAsync(int id)
+        public async Task<bool> DeleteEventAsync(int id, CancellationToken cancellationToken)
         {
-            return await _eventRepository.DeleteAsync(id);
+            return await _eventRepository.DeleteAsync(id, cancellationToken);
         }
     }
 }

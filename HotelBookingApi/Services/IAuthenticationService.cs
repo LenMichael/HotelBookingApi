@@ -5,7 +5,7 @@ namespace HotelBookingApi.Services
 {
     public interface IAuthenticationService
     {
-        Task<string> LoginAsync(LoginDto loginDto);
+        Task<string> Login(LoginDto loginDto, CancellationToken cancellationToken);
         string GenerateJwtToken(User user);
     }
 

@@ -12,35 +12,35 @@ namespace HotelBookingApi.Services
             _feedbackRepository = feedbackRepository;
         }
 
-        public async Task<IEnumerable<Feedback>> GetAllFeedbackAsync()
+        public async Task<IEnumerable<Feedback>> GetAllFeedback(CancellationToken cancellationToken)
         {
-            return await _feedbackRepository.GetAllAsync();
+            return await _feedbackRepository.GetAll(cancellationToken);
         }
 
-        public async Task<Feedback?> GetFeedbackByIdAsync(int id)
+        public async Task<Feedback?> GetFeedbackById(int id, CancellationToken cancellationToken)
         {
-            return await _feedbackRepository.GetByIdAsync(id);
+            return await _feedbackRepository.GetById(id, cancellationToken);
         }
 
-        public async Task<Feedback> CreateFeedbackAsync(Feedback feedback)
+        public async Task<Feedback> CreateFeedback(Feedback feedback, CancellationToken cancellationToken)
         {
             feedback.CreatedAt = DateTime.UtcNow;
-            return await _feedbackRepository.AddAsync(feedback);
+            return await _feedbackRepository.Add(feedback, cancellationToken);
         }
 
-        public async Task<Feedback?> UpdateFeedbackAsync(int id, Feedback feedback)
+        public async Task<Feedback?> UpdateFeedback(int id, Feedback feedback, CancellationToken cancellationToken)
         {
-            var existingFeedback = await _feedbackRepository.GetByIdAsync(id);
+            var existingFeedback = await _feedbackRepository.GetById(id, cancellationToken);
             if (existingFeedback == null) return null;
 
             existingFeedback.Message = feedback.Message;
             existingFeedback.EmployeeId = feedback.EmployeeId;
-            return await _feedbackRepository.UpdateAsync(existingFeedback);
+            return await _feedbackRepository.Update(existingFeedback, cancellationToken);
         }
 
-        public async Task<bool> DeleteFeedbackAsync(int id)
+        public async Task<bool> DeleteFeedback(int id, CancellationToken cancellationToken)
         {
-            return await _feedbackRepository.DeleteAsync(id);
+            return await _feedbackRepository.Delete(id, cancellationToken);
         }
     }
 }

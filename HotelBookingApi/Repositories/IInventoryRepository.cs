@@ -4,10 +4,10 @@ namespace HotelBookingApi.Repositories
 {
     public interface IInventoryRepository
     {
-        Task<IEnumerable<Inventory>> GetAllAsync();
-        Task<Inventory> GetByIdAsync(int id);
-        Task<Inventory> AddAsync(Inventory item);
-        Task<Inventory> UpdateAsync(Inventory item);
-        Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<Inventory>> GetAll(CancellationToken cancellationToken);
+        Task<Inventory?> GetById(int id, CancellationToken cancellationToken);
+        Task<Inventory> Add(Inventory item, CancellationToken cancellationToken);
+        Task<Inventory> Update(Inventory item, CancellationToken cancellationToken);
+        Task<bool> Delete(int id, CancellationToken cancellationToken);
     }
 }

@@ -5,11 +5,11 @@ namespace HotelBookingApi.Services
 {
     public interface IUserService
     {
-        Task RegisterAsync(RegisterDto registerDto);
-        Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> GetUserByIdAsync(int id);
-        Task<User> CreateUserAsync(User user);
-        Task<User> UpdateUserAsync(int id, User user);
-        Task<bool> DeleteUserAsync(int id);
+        Task Register(RegisterDto registerDto, CancellationToken cancellationToken);
+        Task<IEnumerable<User>> GetAllUsers(CancellationToken cancellationToken);
+        Task<User?> GetUserById(int id, CancellationToken cancellationToken);
+        Task<User> CreateUser(User user, CancellationToken cancellationToken);
+        Task<User> UpdateUser(int id, User user, CancellationToken cancellationToken);
+        Task<bool> DeleteUser(int id, CancellationToken cancellationToken);
     }
 }

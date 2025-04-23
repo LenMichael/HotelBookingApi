@@ -12,37 +12,37 @@ namespace HotelBookingApi.Services
             _paymentRepository = paymentRepository;
         }
 
-        public async Task<IEnumerable<Payment>> GetAllPaymentsAsync()
+        public async Task<IEnumerable<Payment>> GetAllPayments(CancellationToken cancellationToken)
         {
-            return await _paymentRepository.GetAllAsync();
+            return await _paymentRepository.GetAll(cancellationToken);
         }
 
-        public async Task<Payment?> GetPaymentByIdAsync(int id)
+        public async Task<Payment?> GetPaymentById(int id, CancellationToken cancellationToken)
         {
-            return await _paymentRepository.GetByIdAsync(id);
+            return await _paymentRepository.GetById(id, cancellationToken);
         }
 
-        public async Task<Payment> CreatePaymentAsync(Payment payment)
+        public async Task<Payment> CreatePayment(Payment payment, CancellationToken cancellationToken)
         {
             payment.PaymentDate = DateTime.UtcNow;
-            return await _paymentRepository.AddAsync(payment);
+            return await _paymentRepository.Add(payment, cancellationToken);
         }
 
-        public async Task<Payment?> UpdatePaymentAsync(int id, Payment payment)
+        public async Task<Payment?> UpdatePayment(int id, Payment payment, CancellationToken cancellationToken)
         {
-            var existingPayment = await _paymentRepository.GetByIdAsync(id);
+            var existingPayment = await _paymentRepository.GetById(id, cancellationToken);
             if (existingPayment == null) return null;
 
             existingPayment.Amount = payment.Amount;
             existingPayment.PaymentMethod = payment.PaymentMethod;
             existingPayment.PaymentDate = DateTime.UtcNow;
 
-            return await _paymentRepository.UpdateAsync(existingPayment);
+            return await _paymentRepository.Update(existingPayment, cancellationToken);
         }
 
-        public async Task<bool> DeletePaymentAsync(int id)
+        public async Task<bool> DeletePayment(int id, CancellationToken cancellationToken)
         {
-            return await _paymentRepository.DeleteAsync(id);
+            return await _paymentRepository.Delete(id, cancellationToken);
         }
     }
 }

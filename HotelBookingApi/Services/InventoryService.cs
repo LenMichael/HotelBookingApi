@@ -12,36 +12,36 @@ namespace HotelBookingApi.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Inventory>> GetAllItemsAsync()
+        public async Task<IEnumerable<Inventory>> GetAllItems(CancellationToken cancellationToken)
         {
-            return await _repository.GetAllAsync();
+            return await _repository.GetAll(cancellationToken);
         }
 
-        public async Task<Inventory> GetItemByIdAsync(int id)
+        public async Task<Inventory?> GetItemById(int id, CancellationToken cancellationToken)
         {
-            return await _repository.GetByIdAsync(id);
+            return await _repository.GetById(id, cancellationToken);
         }
 
-        public async Task<Inventory> CreateItemAsync(Inventory item)
+        public async Task<Inventory> CreateItem(Inventory item, CancellationToken cancellationToken)
         {
-            return await _repository.AddAsync(item);
+            return await _repository.Add(item, cancellationToken);
         }
 
-        public async Task<Inventory> UpdateItemAsync(int id, Inventory item)
+        public async Task<Inventory?> UpdateItem(int id, Inventory item, CancellationToken cancellationToken)
         {
-            var existingItem = await _repository.GetByIdAsync(id);
+            var existingItem = await _repository.GetById(id, cancellationToken);
             if (existingItem == null) return null;
 
             existingItem.Name = item.Name;
             existingItem.Quantity = item.Quantity;
             existingItem.LastUpdated = DateTime.UtcNow;
 
-            return await _repository.UpdateAsync(existingItem);
+            return await _repository.Update(existingItem, cancellationToken);
         }
 
-        public async Task<bool> DeleteItemAsync(int id)
+        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken)
         {
-            return await _repository.DeleteAsync(id);
+            return await _repository.Delete(id, cancellationToken);
         }
     }
 }

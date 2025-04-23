@@ -12,36 +12,36 @@ namespace HotelBookingApi.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<MaintenanceRequest>> GetAllRequestsAsync()
+        public async Task<IEnumerable<MaintenanceRequest>> GetAllRequests(CancellationToken cancellationToken)
         {
-            return await _repository.GetAllAsync();
+            return await _repository.GetAll(cancellationToken);
         }
 
-        public async Task<MaintenanceRequest> GetRequestByIdAsync(int id)
+        public async Task<MaintenanceRequest?> GetRequestById(int id, CancellationToken cancellationToken)
         {
-            return await _repository.GetByIdAsync(id);
+            return await _repository.GetById(id, cancellationToken);
         }
 
-        public async Task<MaintenanceRequest> CreateRequestAsync(MaintenanceRequest request)
+        public async Task<MaintenanceRequest> CreateRequest(MaintenanceRequest request, CancellationToken cancellationToken)
         {
-            return await _repository.AddAsync(request);
+            return await _repository.Add(request, cancellationToken);
         }
 
-        public async Task<MaintenanceRequest> UpdateRequestAsync(int id, MaintenanceRequest request)
+        public async Task<MaintenanceRequest?> UpdateRequest(int id, MaintenanceRequest request, CancellationToken cancellationToken)
         {
-            var existingRequest = await _repository.GetByIdAsync(id);
+            var existingRequest = await _repository.GetById(id, cancellationToken);
             if (existingRequest == null) return null;
 
             existingRequest.Description = request.Description;
             existingRequest.Status = request.Status;
             existingRequest.UpdatedAt = DateTime.UtcNow;
 
-            return await _repository.UpdateAsync(existingRequest);
+            return await _repository.Update(existingRequest, cancellationToken);
         }
 
-        public async Task<bool> DeleteRequestAsync(int id)
+        public async Task<bool> DeleteRequest(int id, CancellationToken cancellationToken)
         {
-            return await _repository.DeleteAsync(id);
+            return await _repository.Delete(id, cancellationToken);
         }
     }
 }

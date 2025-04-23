@@ -4,10 +4,10 @@ namespace HotelBookingApi.Services
 {
     public interface IHotelBookingService
     {
-        IEnumerable<Booking> GetAllBookings();
-        Booking GetBookingById(int id);
-        void CreateBooking(Booking booking);
-        void UpdateBooking(Booking booking);
-        void DeleteBooking(int id);
+        Task<IEnumerable<Booking>> GetAllBookings(CancellationToken cancellationToken);
+        Task<Booking?> GetBookingById(int id, CancellationToken cancellationToken);
+        Task CreateBooking(Booking booking, CancellationToken cancellationToken);
+        Task<Booking?> UpdateBooking(Booking booking, CancellationToken cancellationToken);
+        Task<bool> DeleteBooking(int id, CancellationToken cancellationToken);
     }
 }

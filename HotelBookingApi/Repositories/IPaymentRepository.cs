@@ -4,10 +4,10 @@ namespace HotelBookingApi.Repositories
 {
     public interface IPaymentRepository
     {
-        Task<IEnumerable<Payment>> GetAllAsync();
-        Task<Payment?> GetByIdAsync(int id);
-        Task<Payment> AddAsync(Payment payment);
-        Task<Payment> UpdateAsync(Payment payment);
-        Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<Payment>> GetAll(CancellationToken cancellationToken);
+        Task<Payment?> GetById(int id, CancellationToken cancellationToken);
+        Task<Payment> Add(Payment payment, CancellationToken cancellationToken);
+        Task<Payment> Update(Payment payment, CancellationToken cancellationToken);
+        Task<bool> Delete(int id, CancellationToken cancellationToken);
     }
 }

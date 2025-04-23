@@ -21,11 +21,11 @@ namespace HotelBookingApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             try
             {
-                var users = await _userService.GetAllUsersAsync();
+                var users = await _userService.GetAllUsers(cancellationToken);
                 _logger.LogInformation("Admin retrieved all users.");
                 return Ok(users);
             }
@@ -53,11 +53,11 @@ namespace HotelBookingApi.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto, CancellationToken cancellationToken)
         {
             try
             {
-                await _userService.RegisterAsync(registerDto);
+                await _userService.Register(registerDto, cancellationToken);
                 _logger.LogInformation("User {Username} registered successfully.", registerDto.Username);
                 return Ok("User registered successfully.");
             }
@@ -69,11 +69,11 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto, CancellationToken cancellationToken)
         {
             try
             {
-                var token = await _authService.LoginAsync(loginDto);
+                var token = await _authService.Login(loginDto, cancellationToken);
                 _logger.LogInformation("User {Username} logged in successfully.", loginDto.Username);
                 return Ok(new { Token = token });
             }

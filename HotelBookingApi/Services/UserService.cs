@@ -13,9 +13,9 @@ namespace HotelBookingApi.Services
             _userRepository = userRepository;
         }
 
-        public async Task RegisterAsync(RegisterDto registerDto)
+        public async Task Register(RegisterDto registerDto, CancellationToken cancellationToken)
         {
-            if (await _userRepository.UserExistsAsync(registerDto.Username))
+            if (await _userRepository.UserExists(registerDto.Username, cancellationToken))
                 throw new InvalidOperationException("Username already exists.");
 
             var user = new User
@@ -25,34 +25,34 @@ namespace HotelBookingApi.Services
                 Role = "User"
             };
 
-            await _userRepository.AddAsync(user);
+            await _userRepository.Add(user, cancellationToken);
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<User>> GetAllUsers(CancellationToken cancellationToken)
         {
-            return await _userRepository.GetAllAsync();
+            return await _userRepository.GetAll(cancellationToken);
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<User> GetUserById(int id, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(id);
+            var user = await _userRepository.GetById(id, cancellationToken);
             if (user == null)
                 throw new KeyNotFoundException("User not found.");
             return user;
         }
 
-        public async Task<User> CreateUserAsync(User user)
+        public async Task<User> CreateUser(User user, CancellationToken cancellationToken)
         {
-            if (await _userRepository.UserExistsAsync(user.Username))
+            if (await _userRepository.UserExists(user.Username, cancellationToken))
                 throw new InvalidOperationException("Username already exists.");
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
-            return await _userRepository.AddAsync(user);
+            return await _userRepository.Add(user, cancellationToken);
         }
 
-        public async Task<User> UpdateUserAsync(int id, User user)
+        public async Task<User> UpdateUser(int id, User user, CancellationToken cancellationToken)
         {
-            var existingUser = await _userRepository.GetByIdAsync(id);
+            var existingUser = await _userRepository.GetById(id, cancellationToken);
             if (existingUser == null)
                 throw new KeyNotFoundException("User not found.");
 
@@ -60,12 +60,12 @@ namespace HotelBookingApi.Services
             existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
             existingUser.Role = user.Role;
 
-            return await _userRepository.UpdateAsync(existingUser);
+            return await _userRepository.Add(existingUser, cancellationToken);
         }
 
-        public async Task<bool> DeleteUserAsync(int id)
+        public async Task<bool> DeleteUser(int id, CancellationToken cancellationToken)
         {
-            return await _userRepository.DeleteAsync(id);
+            return await _userRepository.Delete(id, cancellationToken);
         }
     }
 }

@@ -12,24 +12,24 @@ namespace HotelBookingApi.Services
             _shiftRepository = shiftRepository;
         }
 
-        public async Task<IEnumerable<Shift>> GetAllShiftsAsync()
+        public async Task<IEnumerable<Shift>> GetAllShiftsAsync(CancellationToken cancellationToken)
         {
-            return await _shiftRepository.GetAllAsync();
+            return await _shiftRepository.GetAllAsync(cancellationToken);
         }
 
-        public async Task<Shift> GetShiftByIdAsync(int id)
+        public async Task<Shift?> GetShiftByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await _shiftRepository.GetByIdAsync(id);
+            return await _shiftRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public async Task<Shift> CreateShiftAsync(Shift shift)
+        public async Task<Shift> CreateShiftAsync(Shift shift, CancellationToken cancellationToken)
         {
-            return await _shiftRepository.AddAsync(shift);
+            return await _shiftRepository.AddAsync(shift, cancellationToken);
         }
 
-        public async Task<Shift> UpdateShiftAsync(int id, Shift shift)
+        public async Task<Shift?> UpdateShiftAsync(int id, Shift shift, CancellationToken cancellationToken)
         {
-            var existingShift = await _shiftRepository.GetByIdAsync(id);
+            var existingShift = await _shiftRepository.GetByIdAsync(id, cancellationToken);
             if (existingShift == null) return null;
 
             existingShift.StartTime = shift.StartTime;
@@ -37,12 +37,12 @@ namespace HotelBookingApi.Services
             existingShift.Role = shift.Role;
             existingShift.EmployeeId = shift.EmployeeId;
 
-            return await _shiftRepository.UpdateAsync(existingShift);
+            return await _shiftRepository.UpdateAsync(existingShift, cancellationToken);
         }
 
-        public async Task<bool> DeleteShiftAsync(int id)
+        public async Task<bool> DeleteShiftAsync(int id, CancellationToken cancellationToken)
         {
-            return await _shiftRepository.DeleteAsync(id);
+            return await _shiftRepository.DeleteAsync(id, cancellationToken);
         }
     }
 }

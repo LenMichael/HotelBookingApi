@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBookingApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/maintenance-requests")]
     [ApiController]
     public class MaintenanceRequestController : ControllerBase
     {
@@ -16,41 +16,41 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllRequests()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var requests = await _maintenanceRequestService.GetAllRequestsAsync();
+            var requests = await _maintenanceRequestService.GetAllRequests(cancellationToken);
             return Ok(requests);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetRequestById(int id)
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
-            var request = await _maintenanceRequestService.GetRequestByIdAsync(id);
+            var request = await _maintenanceRequestService.GetRequestById(id, cancellationToken);
             if (request == null)
                 return NotFound("Maintenance request not found.");
             return Ok(request);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRequest([FromBody] MaintenanceRequest request)
+        public async Task<IActionResult> Create([FromBody] MaintenanceRequest request, CancellationToken cancellationToken)
         {
-            var createdRequest = await _maintenanceRequestService.CreateRequestAsync(request);
-            return CreatedAtAction(nameof(GetRequestById), new { id = createdRequest.Id }, createdRequest);
+            var createdRequest = await _maintenanceRequestService.CreateRequest(request, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = createdRequest.Id }, createdRequest);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRequest(int id, [FromBody] MaintenanceRequest request)
+        public async Task<IActionResult> Update(int id, [FromBody] MaintenanceRequest request, CancellationToken cancellationToken)
         {
-            var updatedRequest = await _maintenanceRequestService.UpdateRequestAsync(id, request);
+            var updatedRequest = await _maintenanceRequestService.UpdateRequest(id, request, cancellationToken);
             if (updatedRequest == null)
                 return NotFound("Maintenance request not found.");
             return Ok(updatedRequest);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRequest(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var isDeleted = await _maintenanceRequestService.DeleteRequestAsync(id);
+            var isDeleted = await _maintenanceRequestService.DeleteRequest(id, cancellationToken);
             if (!isDeleted)
                 return NotFound("Maintenance request not found.");
             return NoContent();

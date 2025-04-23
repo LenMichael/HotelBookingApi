@@ -13,37 +13,37 @@ namespace HotelBookingApi.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<MaintenanceRequest>> GetAllAsync()
+        public async Task<IEnumerable<MaintenanceRequest>> GetAll(CancellationToken cancellationToken)
         {
-            return await _context.MaintenanceRequests.ToListAsync();
+            return await _context.MaintenanceRequests.ToListAsync(cancellationToken);
         }
 
-        public async Task<MaintenanceRequest> GetByIdAsync(int id)
+        public async Task<MaintenanceRequest?> GetById(int id, CancellationToken cancellationToken)
         {
-            return await _context.MaintenanceRequests.FindAsync(id);
+            return await _context.MaintenanceRequests.FindAsync(id, cancellationToken);
         }
 
-        public async Task<MaintenanceRequest> AddAsync(MaintenanceRequest request)
+        public async Task<MaintenanceRequest> Add(MaintenanceRequest request, CancellationToken cancellationToken)
         {
             _context.MaintenanceRequests.Add(request);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return request;
         }
 
-        public async Task<MaintenanceRequest> UpdateAsync(MaintenanceRequest request)
+        public async Task<MaintenanceRequest> Update(MaintenanceRequest request, CancellationToken cancellationToken)
         {
             _context.MaintenanceRequests.Update(request);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return request;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> Delete(int id, CancellationToken cancellationToken)
         {
-            var request = await _context.MaintenanceRequests.FindAsync(id);
+            var request = await _context.MaintenanceRequests.FindAsync(id, cancellationToken);
             if (request == null) return false;
 
             _context.MaintenanceRequests.Remove(request);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
     }

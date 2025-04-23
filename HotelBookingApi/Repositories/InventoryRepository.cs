@@ -13,37 +13,37 @@ namespace HotelBookingApi.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Inventory>> GetAllAsync()
+        public async Task<IEnumerable<Inventory>> GetAll(CancellationToken cancellationToken)
         {
-            return await _context.Inventories.ToListAsync();
+            return await _context.Inventories.ToListAsync(cancellationToken);
         }
 
-        public async Task<Inventory> GetByIdAsync(int id)
+        public async Task<Inventory?> GetById(int id, CancellationToken cancellationToken)
         {
-            return await _context.Inventories.FindAsync(id);
+            return await _context.Inventories.FindAsync(id, cancellationToken);
         }
 
-        public async Task<Inventory> AddAsync(Inventory item)
+        public async Task<Inventory> Add(Inventory item, CancellationToken cancellationToken)
         {
             _context.Inventories.Add(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return item;
         }
 
-        public async Task<Inventory> UpdateAsync(Inventory item)
+        public async Task<Inventory> Update(Inventory item, CancellationToken cancellationToken)
         {
             _context.Inventories.Update(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return item;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> Delete(int id, CancellationToken cancellationToken)
         {
-            var item = await _context.Inventories.FindAsync(id);
+            var item = await _context.Inventories.FindAsync(id, cancellationToken);
             if (item == null) return false;
 
             _context.Inventories.Remove(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
     }

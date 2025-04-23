@@ -13,37 +13,37 @@ namespace HotelBookingApi.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Feedback>> GetAllAsync()
+        public async Task<IEnumerable<Feedback>> GetAll(CancellationToken cancellationToken)
         {
-            return await _context.Feedbacks.Include(f => f.Employee).ToListAsync();
+            return await _context.Feedbacks.Include(f => f.Employee).ToListAsync(cancellationToken);
         }
 
-        public async Task<Feedback?> GetByIdAsync(int id)
+        public async Task<Feedback?> GetById(int id, CancellationToken cancellationToken)
         {
-            return await _context.Feedbacks.Include(f => f.Employee).FirstOrDefaultAsync(f => f.Id == id);
+            return await _context.Feedbacks.Include(f => f.Employee).FirstOrDefaultAsync(f => f.Id == id, cancellationToken);
         }
 
-        public async Task<Feedback> AddAsync(Feedback feedback)
+        public async Task<Feedback> Add(Feedback feedback, CancellationToken cancellationToken)
         {
             _context.Feedbacks.Add(feedback);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return feedback;
         }
 
-        public async Task<Feedback> UpdateAsync(Feedback feedback)
+        public async Task<Feedback> Update(Feedback feedback, CancellationToken cancellationToken)
         {
             _context.Feedbacks.Update(feedback);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return feedback;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> Delete(int id, CancellationToken cancellationToken)
         {
-            var feedback = await _context.Feedbacks.FindAsync(id);
+            var feedback = await _context.Feedbacks.FindAsync(id, cancellationToken);
             if (feedback == null) return false;
 
             _context.Feedbacks.Remove(feedback);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
     }

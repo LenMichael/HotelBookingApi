@@ -5,7 +5,7 @@ using HotelBookingApi.Services;
 
 namespace HotelBookingApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/bookings")]
     [ApiController]
     public class HotelBookingController : ControllerBase
     {
@@ -19,17 +19,17 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Booking>> GetAll()
+        public async Task<ActionResult<IEnumerable<Booking>>> GetAll(CancellationToken cancellationToken)
         {
-            var bookings = _service.GetAllBookings();
+            var bookings = await _service.GetAllBookings(cancellationToken);
             _logger.LogInformation("Retrieved all bookings.");
             return Ok(bookings);
         }
 
-        [HttpGet]
-        public ActionResult<Booking> Get(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Booking>> GetById(int id, CancellationToken cancellationToken)
         {
-            var booking = _service.GetBookingById(id);
+            var booking = await _service.GetBookingById(id, cancellationToken);
             if (booking == null)
             {
                 _logger.LogWarning($"Booking with ID {id} not found.");
@@ -40,70 +40,56 @@ namespace HotelBookingApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public ActionResult<Booking> Create(Booking booking)
+        public async Task<ActionResult<Booking>> Create(Booking booking, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid model state for booking.");
-                return BadRequest(ModelState);
-            }
-
-            _service.CreateBooking(booking);
+            await _service.CreateBooking(booking, cancellationToken);
             _logger.LogInformation("Created new booking.");
             return Ok(booking);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public ActionResult<Booking> Edit(int id, Booking booking)
+        public async Task<ActionResult<Booking>> Edit(int id, Booking booking, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid model state for booking.");
-                return BadRequest(ModelState);
-            }
-            // Check if the booking ID in the URL matches the booking ID in the body
             if (id != booking.Id)
             {
                 _logger.LogWarning($"Booking ID mismatch: {id} != {booking.Id}");
                 return BadRequest("Booking ID mismatch.");
             }
-            // Check if the booking exists
-            var existingBooking = _service.GetBookingById(id);
-            if (existingBooking == null)
+
+            var updatedBooking = await _service.UpdateBooking(booking, cancellationToken);
+            if (updatedBooking == null)
             {
                 _logger.LogWarning($"Booking with ID {id} not found.");
                 return NotFound();
             }
 
-            _service.UpdateBooking(booking);
             _logger.LogInformation($"Updated booking with ID {id}.");
-            return Ok(booking);
+            return Ok(updatedBooking);
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete]
-        public ActionResult<Booking> Delete(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var booking = _service.GetBookingById(id);
-            if (booking == null)
+            var isDeleted = await _service.DeleteBooking(id, cancellationToken);
+            if (!isDeleted)
             {
                 _logger.LogWarning($"Booking with ID {id} not found.");
                 return NotFound();
             }
 
-            _service.DeleteBooking(id);
             _logger.LogInformation($"Deleted booking with ID {id}.");
             return NoContent();
         }
 
-        [HttpGet("paged")]
-        public ActionResult<IEnumerable<Booking>> GetAllPaged(int PageNumber = 1, int pageSize = 10)
-        {
-            var bookingsPaged = _service.GetAllBookings().Skip((PageNumber - 1) * pageSize).Take(pageSize).ToList();
-            _logger.LogInformation("Retrieved all bookings.");
-            return Ok(bookingsPaged);
-        }
+        //[HttpGet("paged")]
+        //public ActionResult<IEnumerable<Booking>> GetAllPaged(int PageNumber = 1, int pageSize = 10)
+        //{
+        //    var bookingsPaged = _service.GetAllBookings().Skip((PageNumber - 1) * pageSize).Take(pageSize).ToList();
+        //    _logger.LogInformation("Retrieved all bookings.");
+        //    return Ok(bookingsPaged);
+        //}
 
         #region Filter Methods
         //[HttpGet]

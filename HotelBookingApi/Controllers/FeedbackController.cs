@@ -1,10 +1,11 @@
 ﻿using HotelBookingApi.Models;
 using HotelBookingApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Serialization;
 
 namespace HotelBookingApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/feedback")]
     [ApiController]
     public class FeedbackController : ControllerBase
     {
@@ -16,41 +17,41 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllFeedback()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var feedbacks = await _feedbackService.GetAllFeedbackAsync();
+            var feedbacks = await _feedbackService.GetAllFeedback(cancellationToken);
             return Ok(feedbacks);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetFeedbackById(int id)
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
-            var feedback = await _feedbackService.GetFeedbackByIdAsync(id);
+            var feedback = await _feedbackService.GetFeedbackById(id, cancellationToken);
             if (feedback == null)
                 return NotFound("Feedback not found.");
             return Ok(feedback);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateFeedback([FromBody] Feedback feedback)
+        public async Task<IActionResult> CreateFeedback([FromBody] Feedback feedback, CancellationToken cancellationToken)
         {
-            var createdFeedback = await _feedbackService.CreateFeedbackAsync(feedback);
-            return CreatedAtAction(nameof(GetFeedbackById), new { id = createdFeedback.Id }, createdFeedback);
+            var createdFeedback = await _feedbackService.CreateFeedback(feedback, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = createdFeedback.Id }, createdFeedback);
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateFeedback(int id, [FromBody] Feedback feedback)
-        //{
-        //    var updatedFeedback = await _feedbackService.UpdateFeedbackAsync(id, feedback);
-        //    if (updatedFeedback == null)
-        //        return NotFound("Feedback not found.");
-        //    return Ok(updatedFeedback);
-        //}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateFeedback(int id, [FromBody] Feedback feedback, CancellationToken cancellationToken)
+        {
+            var updatedFeedback = await _feedbackService.UpdateFeedback(id, feedback, cancellationToken);
+            if (updatedFeedback == null)
+                return NotFound("Feedback not found.");
+            return Ok(updatedFeedback);
+        }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFeedback(int id)
+        public async Task<IActionResult> DeleteFeedback(int id, CancellationToken cancellationToken)
         {
-            var isDeleted = await _feedbackService.DeleteFeedbackAsync(id);
+            var isDeleted = await _feedbackService.DeleteFeedback(id, cancellationToken);
             if (!isDeleted)
                 return NotFound("Feedback not found.");
             return NoContent();
