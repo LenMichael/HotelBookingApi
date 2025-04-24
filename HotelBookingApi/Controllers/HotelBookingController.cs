@@ -42,9 +42,10 @@ namespace HotelBookingApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Booking>> Create(Booking booking, CancellationToken cancellationToken)
         {
-            await _service.CreateBooking(booking, cancellationToken);
+            var createdBooking = await _service.CreateBooking(booking, cancellationToken);
             _logger.LogInformation("Created new booking.");
-            return Ok(booking);
+            //return Ok(booking);
+            return CreatedAtAction(nameof(GetById), new { id = booking.Id}, booking);
         }
 
         [Authorize(Roles = "Admin")]

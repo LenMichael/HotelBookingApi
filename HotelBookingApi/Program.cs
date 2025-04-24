@@ -12,6 +12,9 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add User Secrets to Configuration
+builder.Configuration.AddUserSecrets<Program>();
+
 // ----------------------------
 // Configure Database Context
 // ----------------------------

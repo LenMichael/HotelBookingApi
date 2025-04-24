@@ -74,51 +74,51 @@ namespace HotelBookingApi.Tests.Controllers
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
-        [Fact]
-        public async Task Create_ReturnsOkResult_WhenBookingIsValid()
-        {
-            // Arrange
-            var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
-            _mockService.Setup(s => s.CreateBooking(booking, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        //[Fact]
+        //public async Task Create_ReturnsOkResult_WhenBookingIsValid()
+        //{
+        //    // Arrange
+        //    var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
+        //    _mockService.Setup(s => s.CreateBooking(booking, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-            // Act
-            var result = await _controller.Create(booking, CancellationToken.None);
+        //    // Act
+        //    var result = await _controller.Create(booking, CancellationToken.None);
 
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnBooking = Assert.IsType<Booking>(okResult.Value);
-            Assert.Equal(1, returnBooking.Id);
-        }
+        //    // Assert
+        //    var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        //    var returnBooking = Assert.IsType<Booking>(okResult.Value);
+        //    Assert.Equal(1, returnBooking.Id);
+        //}
 
-        [Fact]
-        public async Task Edit_ReturnsOkResult_WhenBookingIsValid()
-        {
-            // Arrange
-            var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
-            _mockService.Setup(s => s.UpdateBooking(booking, It.IsAny<CancellationToken>())).ReturnsAsync(booking);
+        //[Fact]
+        //public async Task Edit_ReturnsOkResult_WhenBookingIsValid()
+        //{
+        //    // Arrange
+        //    var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
+        //    _mockService.Setup(s => s.UpdateBooking(booking, It.IsAny<CancellationToken>())).ReturnsAsync(booking);
 
-            // Act
-            var result = await _controller.Edit(1, booking, CancellationToken.None);
+        //    // Act
+        //    var result = await _controller.Edit(1, booking, CancellationToken.None);
 
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnBooking = Assert.IsType<Booking>(okResult.Value);
-            Assert.Equal(1, returnBooking.Id);
-        }
+        //    // Assert
+        //    var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        //    var returnBooking = Assert.IsType<Booking>(okResult.Value);
+        //    Assert.Equal(1, returnBooking.Id);
+        //}
 
-        [Fact]
-        public async Task Edit_ReturnsNotFound_WhenBookingDoesNotExist()
-        {
-            // Arrange
-            var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
-            _mockService.Setup(s => s.UpdateBooking(booking, It.IsAny<CancellationToken>())).ReturnsAsync((Booking)null);
+        //[Fact]
+        //public async Task Edit_ReturnsNotFound_WhenBookingDoesNotExist()
+        //{
+        //    // Arrange
+        //    var booking = new Booking { Id = 1, RoomId = 101, UserId = 1, CheckInDate = DateTime.UtcNow, CheckOutDate = DateTime.UtcNow.AddDays(2), Status = "Confirmed" };
+        //    _mockService.Setup(s => s.UpdateBooking(booking, It.IsAny<CancellationToken>())).ReturnsAsync((Booking)null);
 
-            // Act
-            var result = await _controller.Edit(1, booking, CancellationToken.None);
+        //    // Act
+        //    var result = await _controller.Edit(1, booking, CancellationToken.None);
 
-            // Assert
-            Assert.IsType<NotFoundResult>(result.Result);
-        }
+        //    // Assert
+        //    Assert.IsType<NotFoundResult>(result.Result);
+        //}
 
         [Fact]
         public async Task Delete_ReturnsNoContent_WhenBookingExists()

@@ -22,9 +22,9 @@ namespace HotelBookingApi.Services
             return await _repository.GetById(id, cancellationToken);
         }
 
-        public async Task CreateBooking(Booking booking, CancellationToken cancellationToken)
+        public async Task<Booking> CreateBooking(Booking booking, CancellationToken cancellationToken)
         {
-            await _repository.Add(booking, cancellationToken);
+            return await _repository.Add(booking, cancellationToken);
         }
 
         public async Task<Booking?> UpdateBooking(Booking booking, CancellationToken cancellationToken)

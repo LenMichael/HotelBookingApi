@@ -24,10 +24,11 @@ namespace HotelBookingApi.Repositories
             return await _context.Bookings.FindAsync(id, cancellationToken);
         }
 
-        public async Task Add(Booking booking, CancellationToken cancellationToken)
+        public async Task<Booking> Add(Booking booking, CancellationToken cancellationToken)
         {
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync(cancellationToken);
+            return booking;
         }
 
         public async Task<Booking?> Update(Booking booking, CancellationToken cancellationToken)
