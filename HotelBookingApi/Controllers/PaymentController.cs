@@ -44,7 +44,8 @@ namespace HotelBookingApi.Controllers
             var updatedPayment = await _paymentService.UpdatePayment(id, payment, cancellationToken);
             if (updatedPayment == null)
                 return NotFound("Payment not found.");
-            return Ok(updatedPayment);
+            //return Ok(updatedPayment);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

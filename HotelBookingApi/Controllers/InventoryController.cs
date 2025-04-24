@@ -45,7 +45,8 @@ namespace HotelBookingApi.Controllers
             var updatedItem = await _inventoryService.UpdateItem(id, item, cancellationToken);
             if (updatedItem == null)
                 return NotFound("Item not found.");
-            return Ok(updatedItem);
+            //return Ok(updatedItem);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

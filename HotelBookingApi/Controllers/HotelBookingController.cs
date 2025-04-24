@@ -49,7 +49,7 @@ namespace HotelBookingApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<Booking>> Edit(int id, Booking booking, CancellationToken cancellationToken)
+        public async Task<ActionResult<Booking>> Update(int id, Booking booking, CancellationToken cancellationToken)
         {
             if (id != booking.Id)
             {
@@ -65,7 +65,8 @@ namespace HotelBookingApi.Controllers
             }
 
             _logger.LogInformation($"Updated booking with ID {id}.");
-            return Ok(updatedBooking);
+            //return Ok(updatedBooking);
+            return NoContent();
         }
 
         [Authorize(Roles = "Admin")]

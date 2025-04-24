@@ -35,7 +35,7 @@ namespace HotelBookingApi.Controllers
 
         // POST: api/shifts
         [HttpPost]
-        public async Task<IActionResult> CreateShift([FromBody] Shift shift, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] Shift shift, CancellationToken cancellationToken)
         {
             var createdShift = await _shiftService.CreateShiftAsync(shift, cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = createdShift.Id }, createdShift);
@@ -43,17 +43,18 @@ namespace HotelBookingApi.Controllers
 
         // PUT: api/shifts/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateShift(int id, [FromBody] Shift shift, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(int id, [FromBody] Shift shift, CancellationToken cancellationToken)
         {
             var updatedShift = await _shiftService.UpdateShiftAsync(id, shift, cancellationToken);
             if (updatedShift == null)
                 return NotFound("Shift not found.");
-            return Ok(updatedShift);
+            //return Ok(updatedShift);
+            return NoContent();
         }
 
         // DELETE: api/shifts/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteShift(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var isDeleted = await _shiftService.DeleteShiftAsync(id, cancellationToken);
             if (!isDeleted)

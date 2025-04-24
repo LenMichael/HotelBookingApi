@@ -44,7 +44,8 @@ namespace HotelBookingApi.Controllers
             var updatedRequest = await _maintenanceRequestService.UpdateRequest(id, request, cancellationToken);
             if (updatedRequest == null)
                 return NotFound("Maintenance request not found.");
-            return Ok(updatedRequest);
+            //return Ok(updatedRequest);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

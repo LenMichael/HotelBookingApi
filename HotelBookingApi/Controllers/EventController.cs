@@ -44,7 +44,8 @@ namespace HotelBookingApi.Controllers
             var updatedEvent = await _eventService.UpdateEventAsync(id, eventItem, cancellationToken);
             if (updatedEvent == null)
                 return NotFound("Event not found.");
-            return Ok(updatedEvent);
+            //return Ok(updatedEvent);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

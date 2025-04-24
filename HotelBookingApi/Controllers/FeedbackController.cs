@@ -33,23 +33,24 @@ namespace HotelBookingApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateFeedback([FromBody] Feedback feedback, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] Feedback feedback, CancellationToken cancellationToken)
         {
             var createdFeedback = await _feedbackService.CreateFeedback(feedback, cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = createdFeedback.Id }, createdFeedback);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateFeedback(int id, [FromBody] Feedback feedback, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(int id, [FromBody] Feedback feedback, CancellationToken cancellationToken)
         {
             var updatedFeedback = await _feedbackService.UpdateFeedback(id, feedback, cancellationToken);
             if (updatedFeedback == null)
                 return NotFound("Feedback not found.");
-            return Ok(updatedFeedback);
+            //return Ok(updatedFeedback);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFeedback(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var isDeleted = await _feedbackService.DeleteFeedback(id, cancellationToken);
             if (!isDeleted)
