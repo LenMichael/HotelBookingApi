@@ -1,4 +1,5 @@
-﻿using HotelBookingApi.Models;
+﻿using FluentValidation;
+using HotelBookingApi.Models;
 using HotelBookingApi.Repositories.Interfaces;
 using HotelBookingApi.Services.Interfaces;
 
@@ -7,10 +8,12 @@ namespace HotelBookingApi.Services.Implementations
     public class FeedbackService : IFeedbackService
     {
         private readonly IFeedbackRepository _feedbackRepository;
+        private readonly IValidator<Feedback> _feedbackValidator;
 
-        public FeedbackService(IFeedbackRepository feedbackRepository)
+        public FeedbackService(IFeedbackRepository feedbackRepository, IValidator<Feedback> feedbackValidator)
         {
             _feedbackRepository = feedbackRepository;
+            _feedbackValidator = feedbackValidator;
         }
 
         public async Task<IEnumerable<Feedback>> GetAllFeedback(CancellationToken cancellationToken)
@@ -25,6 +28,11 @@ namespace HotelBookingApi.Services.Implementations
 
         public async Task<Feedback> CreateFeedback(Feedback feedback, CancellationToken cancellationToken)
         {
+            var validationResult = await _feedbackValidator.ValidateAsync(feedback, cancellationToken);
+
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             feedback.CreatedAt = DateTime.UtcNow;
             return await _feedbackRepository.Add(feedback, cancellationToken);
         }

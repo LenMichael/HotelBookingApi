@@ -1,4 +1,5 @@
-﻿using HotelBookingApi.Models;
+﻿using FluentValidation;
+using HotelBookingApi.Models;
 using HotelBookingApi.Repositories.Interfaces;
 using HotelBookingApi.Services.Interfaces;
 
@@ -7,10 +8,12 @@ namespace HotelBookingApi.Services.Implementations
     public class HotelBookingService : IHotelBookingService
     {
         private readonly IHotelBookingRepository _repository;
+        private readonly IValidator<Booking> _bookingValidator;
 
-        public HotelBookingService(IHotelBookingRepository repository)
+        public HotelBookingService(IHotelBookingRepository repository, IValidator<Booking> bookingValidator)
         {
             _repository = repository;
+            _bookingValidator = bookingValidator;
         }
 
         public async Task<IEnumerable<Booking>> GetAllBookings(CancellationToken cancellationToken)
@@ -25,6 +28,11 @@ namespace HotelBookingApi.Services.Implementations
 
         public async Task<Booking> CreateBooking(Booking booking, CancellationToken cancellationToken)
         {
+            var validationResult = await _bookingValidator.ValidateAsync(booking, cancellationToken);
+            
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+            
             return await _repository.Add(booking, cancellationToken);
         }
 

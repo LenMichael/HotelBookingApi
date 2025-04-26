@@ -1,4 +1,5 @@
-﻿using HotelBookingApi.Models;
+﻿using FluentValidation;
+using HotelBookingApi.Models;
 using HotelBookingApi.Repositories.Interfaces;
 using HotelBookingApi.Services.Interfaces;
 
@@ -7,10 +8,12 @@ namespace HotelBookingApi.Services.Implementations
     public class EventService : IEventService
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IValidator<Event> _eventValidator;
 
-        public EventService(IEventRepository eventRepository)
+        public EventService(IEventRepository eventRepository, IValidator<Event> eventValidator)
         {
             _eventRepository = eventRepository;
+            _eventValidator = eventValidator;
         }
 
         public async Task<IEnumerable<Event>> GetAllEventsAsync(CancellationToken cancellationToken)
@@ -25,6 +28,11 @@ namespace HotelBookingApi.Services.Implementations
 
         public async Task<Event> CreateEventAsync(Event eventModel, CancellationToken cancellationToken)
         {
+            var validationResult = await _eventValidator.ValidateAsync(eventModel, cancellationToken);
+
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             return await _eventRepository.AddAsync(eventModel, cancellationToken);
         }
 

@@ -1,6 +1,7 @@
 ﻿using HotelBookingApi.Models;
 using HotelBookingApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace HotelBookingApi.Controllers
 {
@@ -37,8 +38,20 @@ namespace HotelBookingApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Shift shift, CancellationToken cancellationToken)
         {
-            var createdShift = await _shiftService.CreateShiftAsync(shift, cancellationToken);
-            return CreatedAtAction(nameof(GetById), new { id = createdShift.Id }, createdShift);
+            try
+            {
+                var createdShift = await _shiftService.CreateShiftAsync(shift, cancellationToken);
+                return CreatedAtAction(nameof(GetById), new { id = createdShift.Id }, createdShift);
+
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    Message = "Validation failed.",
+                    Errors = new [] { ex.Message }
+                });
+            }
         }
 
         // PUT: api/shifts/{id}

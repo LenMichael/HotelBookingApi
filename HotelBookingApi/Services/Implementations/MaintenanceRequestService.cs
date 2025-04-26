@@ -1,4 +1,5 @@
-﻿using HotelBookingApi.Models;
+﻿using FluentValidation;
+using HotelBookingApi.Models;
 using HotelBookingApi.Repositories.Interfaces;
 using HotelBookingApi.Services.Interfaces;
 
@@ -7,10 +8,12 @@ namespace HotelBookingApi.Services.Implementations
     public class MaintenanceRequestService : IMaintenanceRequestService
     {
         private readonly IMaintenanceRequestRepository _repository;
+        private readonly IValidator<MaintenanceRequest> _maintenanceRequestValidator;
 
-        public MaintenanceRequestService(IMaintenanceRequestRepository repository)
+        public MaintenanceRequestService(IMaintenanceRequestRepository repository, IValidator<MaintenanceRequest> maintenanceRequestValidator)
         {
             _repository = repository;
+            _maintenanceRequestValidator = maintenanceRequestValidator;
         }
 
         public async Task<IEnumerable<MaintenanceRequest>> GetAllRequests(CancellationToken cancellationToken)
@@ -25,6 +28,11 @@ namespace HotelBookingApi.Services.Implementations
 
         public async Task<MaintenanceRequest> CreateRequest(MaintenanceRequest request, CancellationToken cancellationToken)
         {
+            var validationResult = await _maintenanceRequestValidator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             return await _repository.Add(request, cancellationToken);
         }
 

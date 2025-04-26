@@ -1,4 +1,5 @@
-﻿using HotelBookingApi.Models;
+﻿using FluentValidation;
+using HotelBookingApi.Models;
 using HotelBookingApi.Repositories.Interfaces;
 using HotelBookingApi.Services.Interfaces;
 
@@ -7,10 +8,12 @@ namespace HotelBookingApi.Services.Implementations
     public class ShiftService : IShiftService
     {
         private readonly IShiftRepository _shiftRepository;
+        private readonly IValidator<Shift> _shiftValidator;
 
-        public ShiftService(IShiftRepository shiftRepository)
+        public ShiftService(IShiftRepository shiftRepository, IValidator<Shift> shiftValidator)
         {
             _shiftRepository = shiftRepository;
+            _shiftValidator = shiftValidator;
         }
 
         public async Task<IEnumerable<Shift>> GetAllShiftsAsync(CancellationToken cancellationToken)
@@ -25,6 +28,11 @@ namespace HotelBookingApi.Services.Implementations
 
         public async Task<Shift> CreateShiftAsync(Shift shift, CancellationToken cancellationToken)
         {
+            var validationResult = await _shiftValidator.ValidateAsync(shift, cancellationToken);
+
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             return await _shiftRepository.AddAsync(shift, cancellationToken);
         }
 

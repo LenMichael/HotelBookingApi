@@ -1,6 +1,7 @@
 ﻿using HotelBookingApi.Models;
 using HotelBookingApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace HotelBookingApi.Controllers
 {
@@ -34,8 +35,20 @@ namespace HotelBookingApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Event eventItem, CancellationToken cancellationToken)
         {
-            var createdEvent = await _eventService.CreateEventAsync(eventItem, cancellationToken);
-            return CreatedAtAction(nameof(GetById), new { id = createdEvent.Id }, createdEvent);
+            try
+            {
+                var createdEvent = await _eventService.CreateEventAsync(eventItem, cancellationToken);
+                return CreatedAtAction(nameof(GetById), new { id = createdEvent.Id }, createdEvent);
+
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    Message = "Validation failed.",
+                    Errors = new [] { ex.Message }
+                });
+            }
         }
 
         [HttpPut("{id}")]

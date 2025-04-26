@@ -2,6 +2,7 @@
 using HotelBookingApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using HotelBookingApi.Services.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace HotelBookingApi.Controllers
 {
@@ -42,10 +43,21 @@ namespace HotelBookingApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Booking>> Create(Booking booking, CancellationToken cancellationToken)
         {
-            var createdBooking = await _service.CreateBooking(booking, cancellationToken);
-            _logger.LogInformation("Created new booking.");
-            //return Ok(booking);
-            return CreatedAtAction(nameof(GetById), new { id = booking.Id}, booking);
+            try
+            {
+                var createdBooking = await _service.CreateBooking(booking, cancellationToken);
+                _logger.LogInformation("Created new booking.");
+                //return Ok(booking);
+                return CreatedAtAction(nameof(GetById), new { id = createdBooking.Id }, createdBooking);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    Message = "Validation failed.",
+                    Errors = new [] { ex.Message }
+                });
+            }
         }
 
         [Authorize(Roles = "Admin")]

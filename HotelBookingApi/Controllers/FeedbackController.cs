@@ -2,6 +2,7 @@
 using HotelBookingApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace HotelBookingApi.Controllers
 {
@@ -35,8 +36,20 @@ namespace HotelBookingApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Feedback feedback, CancellationToken cancellationToken)
         {
-            var createdFeedback = await _feedbackService.CreateFeedback(feedback, cancellationToken);
-            return CreatedAtAction(nameof(GetById), new { id = createdFeedback.Id }, createdFeedback);
+            try
+            {
+                var createdFeedback = await _feedbackService.CreateFeedback(feedback, cancellationToken);
+                return CreatedAtAction(nameof(GetById), new { id = createdFeedback.Id }, createdFeedback);
+
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    Message = "Validation failed.",
+                    Errors = new[] { ex.Message }
+                });
+            }
         }
 
         [HttpPut("{id}")]

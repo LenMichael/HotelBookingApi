@@ -12,6 +12,7 @@ using HotelBookingApi.Services.Implementations;
 using HotelBookingApi.Services.Interfaces;
 using FluentValidation.AspNetCore;
 using HotelBookingApi.Validators;
+using FluentValidation;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,6 +60,14 @@ builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+builder.Services.AddScoped<IValidator<Booking>, BookingValidator>();
+builder.Services.AddScoped<IValidator<Event>, EventValidator>();
+builder.Services.AddScoped<IValidator<Shift>, ShiftValidator>();
+builder.Services.AddScoped<IValidator<MaintenanceRequest>, MaintenanceRequestValidator>();
+builder.Services.AddScoped<IValidator<Feedback>, FeedbackValidator>();
+builder.Services.AddScoped<IValidator<Inventory>, InventoryValidator>();
+
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
 

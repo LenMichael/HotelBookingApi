@@ -1,4 +1,5 @@
-﻿using HotelBookingApi.Models;
+﻿using FluentValidation;
+using HotelBookingApi.Models;
 using HotelBookingApi.Repositories.Interfaces;
 using HotelBookingApi.Services.Interfaces;
 
@@ -7,10 +8,12 @@ namespace HotelBookingApi.Services.Implementations
     public class InventoryService : IInventoryService
     {
         private readonly IInventoryRepository _repository;
+        private readonly IValidator<Inventory> _inventoryValidator;
 
-        public InventoryService(IInventoryRepository repository)
+        public InventoryService(IInventoryRepository repository, IValidator<Inventory> inventoryValidator)
         {
             _repository = repository;
+            _inventoryValidator = inventoryValidator;
         }
 
         public async Task<IEnumerable<Inventory>> GetAllItems(CancellationToken cancellationToken)
@@ -25,6 +28,11 @@ namespace HotelBookingApi.Services.Implementations
 
         public async Task<Inventory> CreateItem(Inventory item, CancellationToken cancellationToken)
         {
+            var validationResult = await _inventoryValidator.ValidateAsync(item, cancellationToken);
+
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             return await _repository.Add(item, cancellationToken);
         }
 
