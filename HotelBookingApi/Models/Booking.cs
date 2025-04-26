@@ -6,6 +6,8 @@ namespace HotelBookingApi.Models
     public class Booking
     {
         public int Id { get; set; }
+        [Required]
+        public string CustomerName { get; set; } // Optional, if needed
 
         [Required]
         public int RoomId { get; set; } // Foreign Key

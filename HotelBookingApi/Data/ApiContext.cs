@@ -69,6 +69,7 @@ namespace HotelBookingApi.Data
                 new Booking
                 {
                     Id = 1,
+                    CustomerName = "John Doe",
                     RoomId = 1,
                     UserId = 3,
                     CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 4, 20), DateTimeKind.Utc),
@@ -78,6 +79,7 @@ namespace HotelBookingApi.Data
                 new Booking
                 {
                     Id = 2,
+                    CustomerName = "Jane Smith",
                     RoomId = 2,
                     UserId = 3,
                     CheckInDate = DateTime.SpecifyKind(new DateTime(2025, 5, 1), DateTimeKind.Utc),
