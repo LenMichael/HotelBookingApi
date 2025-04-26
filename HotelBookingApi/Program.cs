@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HotelBookingApi.Models;
-using HotelBookingApi.Repositories;
-using HotelBookingApi.Services;
 using Microsoft.OpenApi.Models;
+using HotelBookingApi.Repositories.Implementations;
+using HotelBookingApi.Repositories.Interfaces;
+using HotelBookingApi.Services.Implementations;
+using HotelBookingApi.Services.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);

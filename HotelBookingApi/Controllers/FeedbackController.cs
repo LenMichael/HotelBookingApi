@@ -1,5 +1,5 @@
 ﻿using HotelBookingApi.Models;
-using HotelBookingApi.Services;
+using HotelBookingApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
 

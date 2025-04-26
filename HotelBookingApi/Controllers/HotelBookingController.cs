@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HotelBookingApi.Models;
 using Microsoft.AspNetCore.Authorization;
-using HotelBookingApi.Services;
+using HotelBookingApi.Services.Interfaces;
 
 namespace HotelBookingApi.Controllers
 {

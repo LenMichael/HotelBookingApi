@@ -1,6 +1,6 @@
 ﻿using HotelBookingApi.Controllers;
 using HotelBookingApi.Models;
-using HotelBookingApi.Services;
+using HotelBookingApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;

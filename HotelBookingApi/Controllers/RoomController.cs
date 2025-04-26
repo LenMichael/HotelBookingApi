@@ -1,4 +1,4 @@
-﻿using HotelBookingApi.Services;
+﻿using HotelBookingApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBookingApi.Controllers

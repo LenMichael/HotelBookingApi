@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Microsoft.Extensions.Caching.Memory;
-using HotelBookingApi.Services;
+using HotelBookingApi.Services.Interfaces;
 
 namespace HotelBookingApi.Tests.Controllers
 {
