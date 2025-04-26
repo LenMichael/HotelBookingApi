@@ -153,6 +153,7 @@ namespace HotelBookingApi.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CustomerName = table.Column<string>(type: "text", nullable: false),
                     RoomId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     CheckInDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -287,9 +288,9 @@ namespace HotelBookingApi.Migrations
                 columns: new[] { "Id", "LastUpdated", "Name", "Quantity" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(691), "Towels", 50 },
-                    { 2, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(691), "Shampoo", 30 },
-                    { 3, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(692), "Soap", 100 }
+                    { 1, new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2285), "Towels", 50 },
+                    { 2, new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2287), "Shampoo", 30 },
+                    { 3, new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2287), "Soap", 100 }
                 });
 
             migrationBuilder.InsertData(
@@ -297,9 +298,9 @@ namespace HotelBookingApi.Migrations
                 columns: new[] { "Id", "PasswordHash", "Role", "Username" },
                 values: new object[,]
                 {
-                    { 1, "$2a$11$O/yKVJZZZiCuCVwkHlilvezkvyLq32axmVVGz7OHqOqx/uxeoeSji", "Admin", "admin" },
-                    { 2, "$2a$11$armLdhOdAWMfMuczK2IoW.NHspaB7DDrXsprI3Tg6svqTZfFaTg/O", "IT", "itsupport" },
-                    { 3, "$2a$11$wdykDlOTS5Z/aQYsAEAcB.qkg/wZUuN5YxgPdyqSf6dkhlo78eHjG", "Employee", "employee" }
+                    { 1, "$2a$11$uHMKVhi9HQv6yZuC4mvKa.RndwqX5JeOeGvtW7U2aS1rhL7osSb62", "Admin", "admin" },
+                    { 2, "$2a$11$A.4DhnBSxm7LYQiCBWH.qeGjKiR85I7Ki16aPYf5H2s3P1/MObqRO", "IT", "itsupport" },
+                    { 3, "$2a$11$6TWHPGRvQCWgiPZnYg5bpeeahCEt7FMXR9gng3jmC8jG5c5bl2bNS", "Employee", "employee" }
                 });
 
             migrationBuilder.InsertData(
@@ -316,8 +317,8 @@ namespace HotelBookingApi.Migrations
                 columns: new[] { "Id", "Action", "Timestamp", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Created a booking", new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(660), 1 },
-                    { 2, "Updated room details", new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(662), 2 }
+                    { 1, "Created a booking", new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2254), 1 },
+                    { 2, "Updated room details", new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2257), 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -332,11 +333,11 @@ namespace HotelBookingApi.Migrations
 
             migrationBuilder.InsertData(
                 table: "Bookings",
-                columns: new[] { "Id", "CheckInDate", "CheckOutDate", "RoomId", "Status", "UserId" },
+                columns: new[] { "Id", "CheckInDate", "CheckOutDate", "CustomerName", "RoomId", "Status", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 4, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 4, 25, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Confirmed", 3 },
-                    { 2, new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 2, "Cancelled", 3 }
+                    { 1, new DateTime(2025, 4, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 4, 25, 0, 0, 0, 0, DateTimeKind.Utc), "John Doe", 1, "Confirmed", 3 },
+                    { 2, new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), "Jane Smith", 2, "Cancelled", 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -344,8 +345,8 @@ namespace HotelBookingApi.Migrations
                 columns: new[] { "Id", "CreatedAt", "EmployeeId", "Message" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(2823), 1, "The new booking system is very efficient." },
-                    { 2, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(2824), 2, "We need more training on the inventory management system." }
+                    { 1, new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(3935), 1, "The new booking system is very efficient." },
+                    { 2, new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(3937), 2, "We need more training on the inventory management system." }
                 });
 
             migrationBuilder.InsertData(
@@ -353,8 +354,8 @@ namespace HotelBookingApi.Migrations
                 columns: new[] { "Id", "CreatedAt", "Description", "RoomId", "Status", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(1425), "Air conditioning not working", 1, "Pending", null },
-                    { 2, new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(1426), "Leaking faucet in bathroom", 2, "In Progress", new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(1427) }
+                    { 1, new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2850), "Air conditioning not working", 1, "Pending", null },
+                    { 2, new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2851), "Leaking faucet in bathroom", 2, "In Progress", new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2851) }
                 });
 
             migrationBuilder.InsertData(

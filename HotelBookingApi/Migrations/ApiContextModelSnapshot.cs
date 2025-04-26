@@ -36,6 +36,10 @@ namespace HotelBookingApi.Migrations
                     b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("RoomId")
                         .HasColumnType("integer");
 
@@ -61,6 +65,7 @@ namespace HotelBookingApi.Migrations
                             Id = 1,
                             CheckInDate = new DateTime(2025, 4, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             CheckOutDate = new DateTime(2025, 4, 25, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CustomerName = "John Doe",
                             RoomId = 1,
                             Status = "Confirmed",
                             UserId = 3
@@ -70,6 +75,7 @@ namespace HotelBookingApi.Migrations
                             Id = 2,
                             CheckInDate = new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CheckOutDate = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CustomerName = "Jane Smith",
                             RoomId = 2,
                             Status = "Cancelled",
                             UserId = 3
@@ -204,14 +210,14 @@ namespace HotelBookingApi.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(2823),
+                            CreatedAt = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(3935),
                             EmployeeId = 1,
                             Message = "The new booking system is very efficient."
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(2824),
+                            CreatedAt = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(3937),
                             EmployeeId = 2,
                             Message = "We need more training on the inventory management system."
                         });
@@ -292,21 +298,21 @@ namespace HotelBookingApi.Migrations
                         new
                         {
                             Id = 1,
-                            LastUpdated = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(691),
+                            LastUpdated = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2285),
                             Name = "Towels",
                             Quantity = 50
                         },
                         new
                         {
                             Id = 2,
-                            LastUpdated = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(691),
+                            LastUpdated = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2287),
                             Name = "Shampoo",
                             Quantity = 30
                         },
                         new
                         {
                             Id = 3,
-                            LastUpdated = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(692),
+                            LastUpdated = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2287),
                             Name = "Soap",
                             Quantity = 100
                         });
@@ -342,14 +348,14 @@ namespace HotelBookingApi.Migrations
                         {
                             Id = 1,
                             Action = "Created a booking",
-                            Timestamp = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(660),
+                            Timestamp = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2254),
                             UserId = 1
                         },
                         new
                         {
                             Id = 2,
                             Action = "Updated room details",
-                            Timestamp = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(662),
+                            Timestamp = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2257),
                             UserId = 2
                         });
                 });
@@ -392,7 +398,7 @@ namespace HotelBookingApi.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(1425),
+                            CreatedAt = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2850),
                             Description = "Air conditioning not working",
                             RoomId = 1,
                             Status = "Pending"
@@ -400,11 +406,11 @@ namespace HotelBookingApi.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(1426),
+                            CreatedAt = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2851),
                             Description = "Leaking faucet in bathroom",
                             RoomId = 2,
                             Status = "In Progress",
-                            UpdatedAt = new DateTime(2025, 4, 13, 12, 35, 34, 981, DateTimeKind.Utc).AddTicks(1427)
+                            UpdatedAt = new DateTime(2025, 4, 26, 15, 20, 34, 402, DateTimeKind.Utc).AddTicks(2851)
                         });
                 });
 
@@ -586,21 +592,21 @@ namespace HotelBookingApi.Migrations
                         new
                         {
                             Id = 1,
-                            PasswordHash = "$2a$11$O/yKVJZZZiCuCVwkHlilvezkvyLq32axmVVGz7OHqOqx/uxeoeSji",
+                            PasswordHash = "$2a$11$uHMKVhi9HQv6yZuC4mvKa.RndwqX5JeOeGvtW7U2aS1rhL7osSb62",
                             Role = "Admin",
                             Username = "admin"
                         },
                         new
                         {
                             Id = 2,
-                            PasswordHash = "$2a$11$armLdhOdAWMfMuczK2IoW.NHspaB7DDrXsprI3Tg6svqTZfFaTg/O",
+                            PasswordHash = "$2a$11$A.4DhnBSxm7LYQiCBWH.qeGjKiR85I7Ki16aPYf5H2s3P1/MObqRO",
                             Role = "IT",
                             Username = "itsupport"
                         },
                         new
                         {
                             Id = 3,
-                            PasswordHash = "$2a$11$wdykDlOTS5Z/aQYsAEAcB.qkg/wZUuN5YxgPdyqSf6dkhlo78eHjG",
+                            PasswordHash = "$2a$11$6TWHPGRvQCWgiPZnYg5bpeeahCEt7FMXR9gng3jmC8jG5c5bl2bNS",
                             Role = "Employee",
                             Username = "employee"
                         });
