@@ -5,6 +5,8 @@ namespace HotelBookingApi.Models
 {
     public class Booking
     {
+        //We have added fluent validation for this model, so we can remove the Data Annotations
+
         public int Id { get; set; }
         [Required]
         public string CustomerName { get; set; } // Optional, if needed

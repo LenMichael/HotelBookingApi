@@ -10,6 +10,8 @@ using HotelBookingApi.Repositories.Implementations;
 using HotelBookingApi.Repositories.Interfaces;
 using HotelBookingApi.Services.Implementations;
 using HotelBookingApi.Services.Interfaces;
+using FluentValidation.AspNetCore;
+using HotelBookingApi.Validators;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,15 @@ builder.Configuration.AddUserSecrets<Program>();
 //    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<ApiContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+// ----------------------------------
+// Add FluentValidation on pipeline
+// ----------------------------------
+//builder.Services.AddControllers()
+//    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UserValidator>());
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+
 
 // ------------------------------
 // Register Application Services
