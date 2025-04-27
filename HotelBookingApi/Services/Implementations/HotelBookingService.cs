@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Hangfire;
 using HotelBookingApi.Models;
 using HotelBookingApi.Repositories.Interfaces;
 using HotelBookingApi.Services.Interfaces;
@@ -9,11 +10,13 @@ namespace HotelBookingApi.Services.Implementations
     {
         private readonly IHotelBookingRepository _repository;
         private readonly IValidator<Booking> _bookingValidator;
+        private readonly IEmailService _emailService;
 
-        public HotelBookingService(IHotelBookingRepository repository, IValidator<Booking> bookingValidator)
+        public HotelBookingService(IHotelBookingRepository repository, IValidator<Booking> bookingValidator, IEmailService emailService)
         {
             _repository = repository;
             _bookingValidator = bookingValidator;
+            _emailService = emailService;
         }
 
         public async Task<IEnumerable<Booking>> GetAllBookings(CancellationToken cancellationToken)
@@ -26,14 +29,15 @@ namespace HotelBookingApi.Services.Implementations
             return await _repository.GetById(id, cancellationToken);
         }
 
-        public async Task<Booking> CreateBooking(Booking booking, CancellationToken cancellationToken)
+        public async Task CreateBooking(Booking booking, CancellationToken cancellationToken)
         {
             var validationResult = await _bookingValidator.ValidateAsync(booking, cancellationToken);
             
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
             
-            return await _repository.Add(booking, cancellationToken);
+            await _repository.Add(booking, cancellationToken);
+            BackgroundJob.Enqueue(() => _emailService.SendBookingEmail(booking.Id, booking.User.Email));
         }
 
         public async Task<Booking?> UpdateBooking(Booking booking, CancellationToken cancellationToken)

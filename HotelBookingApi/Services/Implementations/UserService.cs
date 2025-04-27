@@ -23,7 +23,8 @@ namespace HotelBookingApi.Services.Implementations
             {
                 Username = registerDto.Username,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-                Role = "User"
+                Role = "User",
+                Email = registerDto.Email
             };
 
             await _userRepository.Add(user, cancellationToken);

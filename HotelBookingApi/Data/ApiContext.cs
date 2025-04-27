@@ -28,9 +28,9 @@ namespace HotelBookingApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), Role = "Admin" },
-                new User { Id = 2, Username = "itsupport", PasswordHash = BCrypt.Net.BCrypt.HashPassword("itsupport123"), Role = "IT" },
-                new User { Id = 3, Username = "employee", PasswordHash = BCrypt.Net.BCrypt.HashPassword("employee123"), Role = "Employee" }
+                new User { Id = 1, Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), Role = "Admin", Email = "das@gmail.com"},
+                new User { Id = 2, Username = "itsupport", PasswordHash = BCrypt.Net.BCrypt.HashPassword("itsupport123"), Role = "IT", Email = "daf@gmail.com" },
+                new User { Id = 3, Username = "employee", PasswordHash = BCrypt.Net.BCrypt.HashPassword("employee123"), Role = "Employee", Email = "daj@gmail.com" }
             );
 
 

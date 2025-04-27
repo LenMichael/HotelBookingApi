@@ -13,12 +13,23 @@ using HotelBookingApi.Services.Interfaces;
 using FluentValidation.AspNetCore;
 using HotelBookingApi.Validators;
 using FluentValidation;
+using Hangfire;
+using Hangfire.MemoryStorage;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add User Secrets to Configuration
 builder.Configuration.AddUserSecrets<Program>();
+
+// Add Hangfire
+builder.Services.AddHangfire(config =>
+{
+    config.UseMemoryStorage(); // Χρησιμοποιούμε In-Memory Storage για απλότητα
+});
+builder.Services.AddHangfireServer();
+
+
 
 // ----------------------------
 // Configure Database Context
@@ -67,6 +78,8 @@ builder.Services.AddScoped<IValidator<Shift>, ShiftValidator>();
 builder.Services.AddScoped<IValidator<MaintenanceRequest>, MaintenanceRequestValidator>();
 builder.Services.AddScoped<IValidator<Feedback>, FeedbackValidator>();
 builder.Services.AddScoped<IValidator<Inventory>, InventoryValidator>();
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
@@ -133,6 +146,17 @@ builder.Services.AddAuthentication(options =>
 // Build the application
 // ------------------------------
 var app = builder.Build();
+
+// Hangfire Dashboard
+app.UseHangfireDashboard();
+
+// middleware
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapHangfireDashboard(); 
+});
 
 // -----------------------------
 // Configure Middleware Pipeline

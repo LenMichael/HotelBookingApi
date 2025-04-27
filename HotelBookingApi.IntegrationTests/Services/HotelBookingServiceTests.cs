@@ -3,6 +3,7 @@ using HotelBookingApi.Data;
 using HotelBookingApi.Models;
 using HotelBookingApi.Repositories.Interfaces;
 using HotelBookingApi.Services.Implementations;
+using HotelBookingApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
@@ -24,7 +25,8 @@ namespace HotelBookingApi.IntegrationTests.Services
 
             var mockRepository = new Mock<IHotelBookingRepository>();
             var mockValidator = new Mock<IValidator<Booking>>();
-            _service = new HotelBookingService(/*_context*/mockRepository.Object, mockValidator.Object);
+            var mockEmailSender = new Mock<IEmailService>();
+            _service = new HotelBookingService(/*_context*/mockRepository.Object, mockValidator.Object, mockEmailSender.Object);
         }
 
         [Fact]
@@ -119,6 +121,7 @@ namespace HotelBookingApi.IntegrationTests.Services
             // Arrange
             var mockRepository = new Mock<IHotelBookingRepository>();
             var mockValidator = new Mock<IValidator<Booking>>();
+            var mockEmailSender = new Mock<IEmailService>();
             var cancellationToken = new CancellationTokenSource().Token;
 
             var expectedBooking = new Booking { Id = 1, UserId = 1, RoomId = 101 };
@@ -126,7 +129,7 @@ namespace HotelBookingApi.IntegrationTests.Services
                 .Setup(repo => repo.GetById(1, cancellationToken))
                 .ReturnsAsync(expectedBooking);
 
-            var service = new HotelBookingService(mockRepository.Object, mockValidator.Object);
+            var service = new HotelBookingService(mockRepository.Object, mockValidator.Object, mockEmailSender.Object);
 
             // Act
             var result = await service.GetBookingById(1, cancellationToken);

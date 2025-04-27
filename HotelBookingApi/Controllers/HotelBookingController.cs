@@ -39,16 +39,16 @@ namespace HotelBookingApi.Controllers
             return Ok(booking);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Booking>> Create(Booking booking, CancellationToken cancellationToken)
         {
             try
             {
-                var createdBooking = await _service.CreateBooking(booking, cancellationToken);
+                /*var createdBooking = */await _service.CreateBooking(booking, cancellationToken);
                 _logger.LogInformation("Created new booking.");
                 //return Ok(booking);
-                return CreatedAtAction(nameof(GetById), new { id = createdBooking.Id }, createdBooking);
+                return CreatedAtAction(nameof(GetById), new { id = /*createdBooking*/booking.Id }, booking/*createdBooking*/);
             }
             catch (ValidationException ex)
             {

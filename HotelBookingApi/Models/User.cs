@@ -11,6 +11,9 @@ namespace HotelBookingApi.Models
         [StringLength(100)]
         public required string Username { get; set; }
         [Required]
+        [StringLength(100)]
+        public required string Email { get; set; }
+        [Required]
         public required string PasswordHash { get; set; }
         [Required]
         [RegularExpression("^(Admin|IT|Employee|Guest|Auditor)$", ErrorMessage = "Role must be either 'Admin', 'IT', 'Guest', Auditor or 'Employee'.")]

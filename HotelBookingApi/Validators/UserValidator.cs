@@ -18,6 +18,9 @@ namespace HotelBookingApi.Validators
                 .NotEmpty().WithMessage("Role is required.")
                 .Matches("^(Admin|IT|Employee|Guest|Auditor)$")
                 .WithMessage("Role must be either 'Admin', 'IT', 'Guest', 'Auditor' or 'Employee'.");
+
+            RuleFor(user => user.Email)
+                .NotEmpty().WithMessage("Email is required.");
         }
     }
 }
