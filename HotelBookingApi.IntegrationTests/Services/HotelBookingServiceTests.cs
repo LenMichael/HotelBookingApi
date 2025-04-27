@@ -112,5 +112,32 @@ namespace HotelBookingApi.IntegrationTests.Services
             // Assert
             Assert.Equal(2, bookings.Count());
         }
+
+        [Fact]
+        public async Task GetBookingById_Should_Call_Repository_Once()
+        {
+            // Arrange
+            var mockRepository = new Mock<IHotelBookingRepository>();
+            var mockValidator = new Mock<IValidator<Booking>>();
+            var cancellationToken = new CancellationTokenSource().Token;
+
+            var expectedBooking = new Booking { Id = 1, UserId = 1, RoomId = 101 };
+            mockRepository
+                .Setup(repo => repo.GetById(1, cancellationToken))
+                .ReturnsAsync(expectedBooking);
+
+            var service = new HotelBookingService(mockRepository.Object, mockValidator.Object);
+
+            // Act
+            var result = await service.GetBookingById(1, cancellationToken);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(expectedBooking.Id, result.Id);
+
+            // Verify
+            mockRepository.Verify(repo => repo.GetById(1, cancellationToken), Times.Once);
+        }
+
     }
 }
