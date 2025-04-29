@@ -25,7 +25,7 @@ builder.Configuration.AddUserSecrets<Program>();
 // Add Hangfire
 builder.Services.AddHangfire(config =>
 {
-    config.UseMemoryStorage(); // Χρησιμοποιούμε In-Memory Storage για απλότητα
+    config.UseMemoryStorage(); // Using In-Memory Storage 
 });
 builder.Services.AddHangfireServer();
 
